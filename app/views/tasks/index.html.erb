@@ -69,21 +69,13 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-          <td>1</td>
-          <td>Задача номер раз</td>
-          <td class="check"><input type="checkbox"></td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Задача номер два два два</td>
-          <td class="check"><input type="checkbox"></td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>№3</td>
-          <td class="check"><input type="checkbox"></td>
-        </tr>
+        <% @tasks.each do |task| %>
+            <tr>
+              <td><%= cycle 1..9999 %></td>
+              <td><%= task.title %></td>
+              <td class="check"><input type="checkbox"></td>
+            </tr>
+        <% end %>
         </tbody>
       </table>
     </div>
@@ -91,7 +83,7 @@
 
     <div class="panel panel-default">
       <!-- Default panel contents -->
-      <div class="panel-heading">А: Обязательно (День)</div>
+      <div class="panel-heading">B: Следующие (Неделя)</div>
 
 
       <!-- Table -->
