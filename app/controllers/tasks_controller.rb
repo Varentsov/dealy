@@ -4,6 +4,12 @@ class TasksController < ApplicationController
   # GET /tasks
   # GET /tasks.json
   def index
+    @today_tasks = Task.where("deadline <= ? OR planning_state = ?", Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc)
+    @next_tasks = Task.where("deadline BETWEEN ? AND ? OR planning_state = ?", Date.today.end_of_day, (Date.today + 7).end_of_day, Task.planning_states[:to_next]).order(:fire => :desc, :deadline => :asc)
+    @other_tasks = (Task.all.order(:fire => :desc, :deadline => :asc) - @today_tasks - @next_tasks)
+  end
+
+  def all_tasks
     @tasks = Task.all
   end
 
@@ -69,6 +75,6 @@ class TasksController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def task_params
-      params.require(:task).permit(:title, :description, :deadline, :fire)
+      params.require(:task).permit(:title, :description, :deadline, :fire, :planning_state)
     end
 end

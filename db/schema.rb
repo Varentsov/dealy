@@ -11,15 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150224124118) do
+ActiveRecord::Schema.define(version: 20150302124851) do
 
   create_table "tasks", force: :cascade do |t|
     t.string   "title"
     t.text     "description"
     t.datetime "deadline"
-    t.boolean  "fire",        default: false, null: false
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.boolean  "fire",           default: false, null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.boolean  "finished",       default: false, null: false
+    t.datetime "finish_time"
+    t.integer  "planning_state", default: 0
   end
 
 end

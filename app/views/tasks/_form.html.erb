@@ -23,6 +23,14 @@
     <%= f.label :deadline %><br>
     <%= f.datetime_select :deadline %>
   </div>
+    <div class="field">
+      <%= f.radio_button :planning_state, "to_sometime" %>
+      <%= f.label :planning_state, 'Когда-нибудь' %><br />
+      <%= f.radio_button :planning_state, "to_next" %>
+      <%= f.label :planning_state, 'Следующие' %><br />
+      <%= f.radio_button :planning_state, "to_today" %>
+      <%= f.label :planning_state, 'Сегодня' %><br />
+    </div>
   <div class="field">
     <%= f.label :fire %><br>
     <%= f.check_box :fire %>

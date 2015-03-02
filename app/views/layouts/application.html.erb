@@ -7,6 +7,20 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+<header>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <%= link_to 'Dealy', root_url, class: 'navbar-brand' %>
+        <ul class="nav navbar-nav">
+          <li><%= link_to 'Новая задача', new_task_path %></li>
+          <li><%= link_to 'Все задачи', all_tasks_tasks_path %></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+<p id="notice"><%= notice %></p>
 
 <%= yield %>
 

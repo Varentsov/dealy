@@ -1,36 +1,3 @@
-<p id="notice"><%= notice %></p>
-
-<h1>Listing Tasks</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Description</th>
-      <th>Deadline</th>
-      <th>Fire</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @tasks.each do |task| %>
-      <tr>
-        <td><%= task.title %></td>
-        <td><%= task.description %></td>
-        <td><%= task.deadline %></td>
-        <td><%= task.fire %></td>
-        <td><%= link_to 'Show', task %></td>
-        <td><%= link_to 'Edit', edit_task_path(task) %></td>
-        <td><%= link_to 'Destroy', task, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Task', new_task_path %>
 <div class="forms">
   <p><span class="forms-text">Построить социальную сеть активных людей</span></p>
   <select class="form-control forms-css">
@@ -49,9 +16,7 @@
     <option>Их группа</option>
     <option>Наша группа</option>
   </select>
-
 </div>
-
 <div class="layout">
   <div class="left-column">
     <div class="panel panel-default">
@@ -69,10 +34,10 @@
         </tr>
         </thead>
         <tbody>
-        <% @tasks.each do |task| %>
+        <% @today_tasks.each do |task| %>
             <tr>
               <td><%= cycle 1..9999 %></td>
-              <td><%= task.title %></td>
+              <td><%= link_to task.title, task %></td>
               <td class="check"><input type="checkbox"></td>
             </tr>
         <% end %>
@@ -96,21 +61,13 @@
         </tr>
         </thead>
         <tbody>
-        <tr>
-          <td>1</td>
-          <td>Задача номер раз</td>
-          <td class="check"><input type="checkbox"></td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Задача номер два два два</td>
-          <td class="check"><input type="checkbox"></td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>№3</td>
-          <td class="check"><input type="checkbox"></td>
-        </tr>
+        <% @next_tasks.each do |task| %>
+            <tr>
+              <td><%= cycle 1..9999 %></td>
+              <td><%= link_to task.title, task %></td>
+              <td class="check"><input type="checkbox"></td>
+            </tr>
+        <% end %>
         </tbody>
       </table>
     </div>
@@ -119,7 +76,7 @@
 
     <div class="panel panel-default">
       <!-- Default panel contents -->
-      <div class="panel-heading">А: Обязательно (День)</div>
+      <div class="panel-heading">C: Удобный момент (по тегам на сегодня)</div>
 
 
       <!-- Table -->
@@ -142,14 +99,36 @@
           <td>Задача номер два два два</td>
           <td class="check"><input type="checkbox"></td>
         </tr>
-        <tr>
-          <td>3</td>
-          <td>№3</td>
-          <td class="check"><input type="checkbox"></td>
-        </tr>
         </tbody>
       </table>
     </div>
+
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">D: Остальные</div>
+
+
+      <!-- Table -->
+      <table class="table">
+        <thead>
+        <tr>
+          <th class="number">#</th>
+          <th class="challenge">Задача</th>
+          <th class="status">Статус</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @other_tasks.each do |task| %>
+            <tr>
+              <td><%= cycle 1..9999 %></td>
+              <td><%= link_to task.title, task %></td>
+              <td class="check"><input type="checkbox"></td>
+            </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+
 
 
 
