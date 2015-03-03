@@ -1,16 +1,19 @@
 class TasksController < ApplicationController
-  before_action :set_task, only: [:show, :edit, :update, :destroy]
+  before_action :set_task, only: [:show, :edit, :update, :destroy, :complete]
 
   # GET /tasks
   # GET /tasks.json
   def index
-    @today_tasks = Task.where("deadline <= ? OR planning_state = ?", Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc)
-    @next_tasks = Task.where("deadline BETWEEN ? AND ? OR planning_state = ?", Date.today.end_of_day, (Date.today + 7).end_of_day, Task.planning_states[:to_next]).order(:fire => :desc, :deadline => :asc)
-    @other_tasks = (Task.all.order(:fire => :desc, :deadline => :asc) - @today_tasks - @next_tasks)
+    #@today_tasks = Task.where("finished = ? AND deadline <= ? OR planning_state = ?", false, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc)
+    @today_tasks_over_deadline = Task.where("finished = ? AND deadline < ?", false, Date.today.beginning_of_day).order(:fire => :desc, :deadline => :asc)
+    @today_tasks_normal = Task.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.beginning_of_day, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline
+    @next_tasks = Task.where("finished = ? AND deadline BETWEEN ? AND ? OR planning_state = ?", false, Date.today.end_of_day, (Date.today + 7).end_of_day, Task.planning_states[:to_next]).order(:fire => :desc, :deadline => :asc)
+    #@other_tasks = (Task.where(:finished => false).order(:fire => :desc, :deadline => :asc) - @today_tasks - @next_tasks)
+    @other_tasks = (Task.where(:finished => false).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_normal - @next_tasks)
   end
 
   def all_tasks
-    @tasks = Task.all
+    @tasks = Task.order(:finished => :asc, :fire => :desc, :deadline => :asc)
   end
 
   # GET /tasks/1
@@ -64,6 +67,14 @@ class TasksController < ApplicationController
     respond_to do |format|
       format.html { redirect_to tasks_url, notice: 'Task was successfully destroyed.' }
       format.json { head :no_content }
+    end
+  end
+
+  def complete
+    if @task.update(:finished => true, :finish_time => DateTime.now)
+      redirect_to :back, notice: "Обновлено"
+    else
+      redirect_to :back, notice: "Ошибка записи"
     end
   end
 

@@ -30,14 +30,24 @@
         <tr>
           <th class="number">#</th>
           <th class="challenge">Задача</th>
+          <th class="status">Готово</th>
           <th class="status">Статус</th>
         </tr>
         </thead>
         <tbody>
-        <% @today_tasks.each do |task| %>
+        <% @today_tasks_over_deadline.each do |task| %>
             <tr>
               <td><%= cycle 1..9999 %></td>
-              <td><%= link_to task.title, task %></td>
+              <td><%= link_to task.title, task, class: (task.over_deadline? ? 'task-over-deadline' : '')%></td>
+              <td class="check"><%= link_to 'Завершить', complete_task_path(task) %></td>
+              <td class="check"><input type="checkbox"></td>
+            </tr>
+        <% end %>
+        <% @today_tasks_normal.each do |task| %>
+            <tr>
+              <td><%= cycle 1..9999 %></td>
+              <td><%= link_to task.title, task, class: (task.over_deadline? ? 'task-over-deadline' : '')%></td>
+              <td class="check"><%= link_to 'Завершить', complete_task_path(task) %></td>
               <td class="check"><input type="checkbox"></td>
             </tr>
         <% end %>
@@ -57,6 +67,7 @@
         <tr>
           <th class="number">#</th>
           <th class="challenge">Задача</th>
+          <th class="status">Готово</th>
           <th class="status">Статус</th>
         </tr>
         </thead>
@@ -64,7 +75,8 @@
         <% @next_tasks.each do |task| %>
             <tr>
               <td><%= cycle 1..9999 %></td>
-              <td><%= link_to task.title, task %></td>
+              <td><%= link_to task.title, task, class: (task.over_deadline? ? 'task-over-deadline' : '')%></td>
+              <td class="check"><%= link_to 'Завершить', complete_task_path(task) %></td>
               <td class="check"><input type="checkbox"></td>
             </tr>
         <% end %>
@@ -114,6 +126,7 @@
         <tr>
           <th class="number">#</th>
           <th class="challenge">Задача</th>
+          <th class="status">Готово</th>
           <th class="status">Статус</th>
         </tr>
         </thead>
@@ -121,7 +134,8 @@
         <% @other_tasks.each do |task| %>
             <tr>
               <td><%= cycle 1..9999 %></td>
-              <td><%= link_to task.title, task %></td>
+              <td><%= link_to task.title, task, class: (task.over_deadline? ? 'task-over-deadline' : '')%></td>
+              <td class="check"><%= link_to 'Завершить', complete_task_path(task) %></td>
               <td class="check"><input type="checkbox"></td>
             </tr>
         <% end %>

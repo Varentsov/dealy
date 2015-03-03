@@ -205,3 +205,17 @@ p {
   font-size: 1.1em;
   line-height: 1.7em;
 }
+
+.task-over-deadline {
+  color: #B00100;
+  &:hover {
+    color: #B00100;
+  }
+}
+
+.task-finished {
+  color: #9d9d9d;
+  &:hover {
+    color: #9d9d9d;
+  }
+}
