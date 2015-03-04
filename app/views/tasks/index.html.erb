@@ -1,4 +1,4 @@
-<div class="forms">
+<!--<div class="forms">
   <p><span class="forms-text">Построить социальную сеть активных людей</span></p>
   <select class="form-control forms-css">
     <option selected>Выбранная цель:</option>
@@ -16,7 +16,7 @@
     <option>Их группа</option>
     <option>Наша группа</option>
   </select>
-</div>
+</div> -->
 <div class="layout">
   <div class="left-column">
     <div class="panel panel-default">
@@ -35,6 +35,14 @@
         </tr>
         </thead>
         <tbody class="sortable-tasks">
+        <% @today_tasks_sorted.each do |task| %>
+            <tr id="<%= task.id %>">
+              <td><%= cycle 1..9999 %></td>
+              <td><%= link_to task.title, task, class: (task.over_deadline? ? 'task-over-deadline' : '')%></td>
+              <td class="check"><%= link_to 'Завершить', complete_task_path(task) %></td>
+              <td class="check"><input type="checkbox"></td>
+            </tr>
+        <% end %>
         <% @today_tasks_over_deadline.each do |task| %>
             <tr id="<%= task.id %>">
               <td><%= cycle 1..9999 %></td>

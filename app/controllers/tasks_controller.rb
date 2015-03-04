@@ -4,12 +4,11 @@ class TasksController < ApplicationController
   # GET /tasks
   # GET /tasks.json
   def index
-    #@today_tasks = Task.where("finished = ? AND deadline <= ? OR planning_state = ?", false, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc)
-    @today_tasks_over_deadline = Task.where("finished = ? AND deadline < ?", false, Date.today.beginning_of_day).order(:fire => :desc, :deadline => :asc)
-    @today_tasks_normal = Task.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.beginning_of_day, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline
+    @today_tasks_sorted = Task.where(:sort_value => 0..99999).order(:sort_value => :asc)
+    @today_tasks_over_deadline = Task.where("finished = ? AND deadline < ?", false, Date.today.beginning_of_day).order(:fire => :desc, :deadline => :asc) - @today_tasks_sorted
+    @today_tasks_normal = Task.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.beginning_of_day, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_sorted
     @next_tasks = Task.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.end_of_day, (Date.today + 7).end_of_day, Task.planning_states[:to_next]).order(:fire => :desc, :deadline => :asc)
-    #@other_tasks = (Task.where(:finished => false).order(:fire => :desc, :deadline => :asc) - @today_tasks - @next_tasks)
-    @other_tasks = (Task.where(:finished => false).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_normal - @next_tasks)
+    @other_tasks = (Task.where(:finished => false).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_normal - @next_tasks - @today_tasks_sorted)
   end
 
   def all_tasks
@@ -76,6 +75,16 @@ class TasksController < ApplicationController
     else
       redirect_to :back, notice: "Ошибка записи"
     end
+  end
+
+  def edit_sort
+    ids = params[:ids].split(',')
+    for i in 0...ids.count
+      task = Task.find(ids[i])
+      task.update!(:sort_value => i)
+    end
+    render json: { status: 'success' }
+    flash[:now] = "Success"
   end
 
   private

@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   resources :tasks do
     collection do
+      post 'edit_sort'
       get 'all_tasks'
     end
     member do

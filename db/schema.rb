@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150302124851) do
+ActiveRecord::Schema.define(version: 20150304192541) do
 
   create_table "tasks", force: :cascade do |t|
     t.string   "title"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20150302124851) do
     t.boolean  "finished",       default: false, null: false
     t.datetime "finish_time"
     t.integer  "planning_state", default: 0
+    t.integer  "sort_value"
   end
 
 end
