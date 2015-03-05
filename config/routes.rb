@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     collection do
       post 'edit_sort'
       get 'all_tasks'
+      get 'clear_sort'
     end
     member do
       get 'complete'

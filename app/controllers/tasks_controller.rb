@@ -4,7 +4,7 @@ class TasksController < ApplicationController
   # GET /tasks
   # GET /tasks.json
   def index
-    @today_tasks_sorted = Task.where(:sort_value => 0..99999).order(:sort_value => :asc)
+    @today_tasks_sorted = Task.where.not(:sort_value => nil).order(:sort_value => :asc)
     @today_tasks_over_deadline = Task.where("finished = ? AND deadline < ?", false, Date.today.beginning_of_day).order(:fire => :desc, :deadline => :asc) - @today_tasks_sorted
     @today_tasks_normal = Task.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.beginning_of_day, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_sorted
     @next_tasks = Task.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.end_of_day, (Date.today + 7).end_of_day, Task.planning_states[:to_next]).order(:fire => :desc, :deadline => :asc)
@@ -79,12 +79,27 @@ class TasksController < ApplicationController
 
   def edit_sort
     ids = params[:ids].split(',')
-    for i in 0...ids.count
-      task = Task.find(ids[i])
-      task.update!(:sort_value => i)
+    new_sort_pressed = ids.index(params[:pressed_id])
+    tasks_with_old_sort = Task.where("sort_value >= ?", new_sort_pressed)
+
+    tasks_with_old_sort.each do |task|
+      cur_sort = task.sort_value
+      task.update!(:sort_value => cur_sort + 1)
     end
+
+    for i in 0...ids.count
+      Task.find(ids[i]).update!(:sort_value => i)
+    end
+
     render json: { status: 'success' }
-    flash[:now] = "Success"
+  end
+
+  def clear_sort
+    Task.where.not(:sort_value => nil).update_all(:sort_value => nil)
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.json {}
+    end
   end
 
   private
