@@ -34,11 +34,11 @@ var who_sorting = function(current_ids, new_ids, pressed_id) {
             flag = false;
         }
     }
-    console.log(sort);
+    //console.log(sort);
     return sort;
 };
 
-$(document).ready(function() {
+$(document).on('page:change', function() {
     var new_sor_ids;
     var current_ids;
     var pressed_id;

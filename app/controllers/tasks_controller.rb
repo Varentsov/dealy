@@ -82,10 +82,7 @@ class TasksController < ApplicationController
     new_sort_pressed = ids.index(params[:pressed_id])
     tasks_with_old_sort = Task.where("sort_value >= ?", new_sort_pressed)
 
-    tasks_with_old_sort.each do |task|
-      cur_sort = task.sort_value
-      task.update!(:sort_value => cur_sort + 1)
-    end
+    tasks_with_old_sort.update_all("sort_value = sort_value + 1")
 
     for i in 0...ids.count
       Task.find(ids[i]).update!(:sort_value => i)
