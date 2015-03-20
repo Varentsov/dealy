@@ -13,5 +13,6 @@
 //= require jquery2
 //= require jquery_ujs
 //= require jquery-ui/sortable
+//= require bootstrap.min
 //= require turbolinks
 //= require_tree .
