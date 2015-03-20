@@ -16,12 +16,17 @@
           <li><%= link_to 'Новая задача', new_task_path %></li>
           <li><%= link_to 'Все задачи', all_tasks_tasks_path %></li>
         </ul>
+        <% if signed_in? %>
+            <%= current_user.last_name %>
+            <%= link_to 'Log out!', sign_out_path, method: :delete %>
+        <% else %>
+            <%= link_to 'Sign in!', sign_in_path %>
+        <% end %>
       </div>
     </div>
   </nav>
 </header>
 <p id="notice"><%= notice %></p>
-
 <%= yield %>
 
 </body>
