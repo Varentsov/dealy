@@ -9,7 +9,7 @@ class TasksController < ApplicationController
     @today_tasks_over_deadline = Task.where("finished = ? AND deadline < ?", false, Date.today.beginning_of_day).order(:fire => :desc, :deadline => :asc) - @today_tasks_sorted
     @today_tasks_normal = Task.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.beginning_of_day, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_sorted
     @next_tasks = Task.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.end_of_day, (Date.today + 7).end_of_day, Task.planning_states[:to_next]).order(:fire => :desc, :deadline => :asc)
-    @other_tasks = (Task.where(:finished => false).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_normal - @next_tasks - @today_tasks_sorted)
+    @other_tasks = Task.where(:finished => false).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_normal - @next_tasks - @today_tasks_sorted
   end
 
   def all_tasks
