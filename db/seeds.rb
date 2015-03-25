@@ -5,3 +5,9 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+User.where.not(:email => 'neck.varentsov@gmail.com').delete_all
+for i in 0...100
+  User.create(email: "#{i}@gmail.com", password: '123123', first_name: i.to_s, last_name: i.to_s)
+  puts i
+end

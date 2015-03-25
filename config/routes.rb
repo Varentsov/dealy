@@ -1,5 +1,12 @@
 Rails.application.routes.draw do
 
+
+  resources :messages, only: [:new, :create, :destroy, :show, :index] do
+    collection do
+      get 'dialog'
+    end
+  end
+
   resources :sessions, only: [:new, :create, :destroy]
   match '/sign_in', to: 'sessions#new', via: :get
   match '/sign_out', to: 'sessions#destroy', via: :delete

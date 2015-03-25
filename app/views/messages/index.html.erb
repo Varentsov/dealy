@@ -1,0 +1,7 @@
+<%= link_to 'Новое сообщение', new_message_path %>
+<br >
+<% @recipients.each do |recipient| %>
+    <%= recipient.message.title %>
+    <%= recipient.message.body %>
+    <%= link_to 'Show', recipient.message %>
+<% end %>
