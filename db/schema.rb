@@ -11,7 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150325063438) do
+ActiveRecord::Schema.define(version: 20150326121414) do
+
+  create_table "conversations", force: :cascade do |t|
+    t.string   "subject",    default: ""
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
 
   create_table "messages", force: :cascade do |t|
     t.string   "title"
@@ -23,13 +29,17 @@ ActiveRecord::Schema.define(version: 20150325063438) do
   create_table "recipients", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "message_id"
-    t.boolean  "inbox",      default: true
-    t.boolean  "read",       default: false
+    t.boolean  "inbox",           default: true
+    t.boolean  "read",            default: false
     t.boolean  "deleted"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",                      null: false
+    t.datetime "updated_at",                      null: false
+    t.integer  "conversation_id"
+    t.integer  "author_id"
   end
 
+  add_index "recipients", ["author_id"], name: "index_recipients_on_author_id"
+  add_index "recipients", ["conversation_id"], name: "index_recipients_on_conversation_id"
   add_index "recipients", ["message_id"], name: "index_recipients_on_message_id"
   add_index "recipients", ["user_id"], name: "index_recipients_on_user_id"
 

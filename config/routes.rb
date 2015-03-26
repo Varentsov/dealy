@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
 
 
+  resources :conversations
+
   resources :messages, only: [:new, :create, :destroy, :show, :index] do
     collection do
       get 'dialog'
