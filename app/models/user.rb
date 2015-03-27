@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   validates :password, length: { minimum: 6 }, on: :update, unless: lambda { |user| user.password.blank? }
   has_many :recipients, dependent: :destroy
   has_many :messages, through: :recipients
+  has_many :conversations, through: :recipients
 
   def User.new_remember_token
     SecureRandom.urlsafe_base64

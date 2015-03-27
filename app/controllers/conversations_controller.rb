@@ -1,20 +1,24 @@
 class ConversationsController < ApplicationController
   before_action :set_conversation, only: [:show, :edit, :update, :destroy]
+  before_action :logged_user
 
   # GET /conversations
   # GET /conversations.json
   def index
-    @conversations = Conversation.all
+    @conversations = current_user.conversations.order(:updated_at => :desc).distinct!
   end
 
   # GET /conversations/1
   # GET /conversations/1.json
   def show
+    @recipients = @conversation.recipients.where(:user_id => current_user.id).includes(:message).order(:created_at => :asc)
+    @message = Message.new
   end
 
   # GET /conversations/new
   def new
     @conversation = Conversation.new
+    @message = Message.new
   end
 
   # GET /conversations/1/edit
@@ -24,28 +28,63 @@ class ConversationsController < ApplicationController
   # POST /conversations
   # POST /conversations.json
   def create
-    @conversation = Conversation.new(conversation_params)
-
-    respond_to do |format|
-      if @conversation.save
-        format.html { redirect_to @conversation, notice: 'Conversation was successfully created.' }
-        format.json { render :show, status: :created, location: @conversation }
-      else
-        format.html { render :new }
-        format.json { render json: @conversation.errors, status: :unprocessable_entity }
+    @conversation = Conversation.new(:subject => conversation_params[:subject])
+    @message = Message.new(conversation_params[:message])
+    flag = false
+    @conversation.valid?
+    @message.valid?
+    begin
+      if conversation_params[:user_ids].first.blank? && conversation_params[:user_ids].size == 1
+        @conversation.errors.add(:user_ids)
+        raise
       end
+      ActiveRecord::Base.transaction do
+        @message.save!
+        @conversation.save!
+        Recipient.create!(:message_id => @message.id, :user_id => current_user.id, :author_id => current_user.id, :conversation_id => @conversation.id)
+        conversation_params[:user_ids].each do |user|
+          if user.present?
+            Recipient.create!(:message_id => @message.id, :user_id => user.to_i, :author_id => current_user.id, :conversation_id => @conversation.id)
+          end
+        end
+        flag = true
+      end
+    rescue => e
+      flag = false
     end
+    respond_to do |format|
+        if flag
+          format.html { redirect_to @conversation, notice: 'Conversation was successfully created.' }
+          format.json { render :show, status: :created, location: @conversation }
+        else
+          format.html { render :new }
+          format.json { render json: @conversation.errors, status: :unprocessable_entity }
+        end
+      end
   end
 
   # PATCH/PUT /conversations/1
   # PATCH/PUT /conversations/1.json
   def update
+    flag = false
+    begin
+      @conversation.transaction do
+        message = Message.create!(message_params)
+        @conversation.update!(:updated_at => Time.now)
+        @conversation.users.uniq.each do |user|
+          Recipient.create!(:message_id => message.id, :user_id => user.id, :author_id => current_user.id, :conversation_id => @conversation.id)
+        end
+        flag = true
+      end
+    rescue => e
+      flag = false
+    end
     respond_to do |format|
-      if @conversation.update(conversation_params)
-        format.html { redirect_to @conversation, notice: 'Conversation was successfully updated.' }
+      if flag
+        format.html { redirect_to @conversation }
         format.json { render :show, status: :ok, location: @conversation }
       else
-        format.html { render :edit }
+        format.html { redirect_to @conversation, notice: "Message cant be blank" }
         format.json { render json: @conversation.errors, status: :unprocessable_entity }
       end
     end
@@ -69,6 +108,10 @@ class ConversationsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def conversation_params
-      params.require(:conversation).permit(:subject)
+      params.require(:conversation).permit(:subject, :message => [:title, :body], :user_ids => [])
+    end
+
+    def message_params
+      params.require(:message).permit(:title, :body)
     end
 end

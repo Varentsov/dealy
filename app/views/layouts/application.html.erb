@@ -14,7 +14,7 @@
         <ul class="nav navbar-nav">
           <li><%= link_to 'Новая задача', new_task_path %></li>
           <li><%= link_to 'Все задачи', all_tasks_tasks_path %></li>
-          <li><%= signed_in? ? (link_to 'Сообщения', messages_path) : '' %></li>
+          <li><%= signed_in? ? (link_to 'Сообщения', conversations_path) : '' %></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <% if signed_in? %>
