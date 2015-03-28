@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150326121414) do
+ActiveRecord::Schema.define(version: 20150328184504) do
 
   create_table "conversations", force: :cascade do |t|
     t.string   "subject",    default: ""
@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(version: 20150326121414) do
     t.integer  "message_id"
     t.boolean  "inbox",           default: true
     t.boolean  "read",            default: false
-    t.boolean  "deleted"
+    t.boolean  "deleted",         default: false
     t.datetime "created_at",                      null: false
     t.datetime "updated_at",                      null: false
     t.integer  "conversation_id"
