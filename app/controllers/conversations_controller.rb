@@ -67,7 +67,9 @@ class ConversationsController < ApplicationController
       @conversation.save!
       conversation_params[:user_ids].each do |user|
         if user.present?
-          Recipient.create!(:user_id => user.to_i, :conversation_id => @conversation.id)
+          # Adding new user to conversation
+          # Without message
+          Recipient.create!(:user_id => user.to_i, :conversation_id => @conversation.id, :author_id => current_user.id)
         end
       end
     end
