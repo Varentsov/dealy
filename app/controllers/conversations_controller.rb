@@ -1,5 +1,5 @@
 class ConversationsController < ApplicationController
-  before_action :set_conversation, only: [:show, :edit, :update, :destroy]
+  before_action :set_conversation, only: [:show, :edit, :update, :destroy, :create_message]
   before_action :logged_user
   before_action :allowed_user, only: [:show, :update, :destroy]
 
@@ -38,12 +38,12 @@ class ConversationsController < ApplicationController
       return
     end
 
-    ActiveRecord::Base.transaction do
+    @conversation.transaction do
       @message.save!
       @conversation.save!
       Recipient.create!(:message_id => @message.id, :user_id => current_user.id, :author_id => current_user.id, :conversation_id => @conversation.id)
       conversation_params[:user_ids].each do |user|
-        if user.present? # TODO && User.find(user.to_i)
+        if user.present?
           Recipient.create!(:message_id => @message.id, :user_id => user.to_i, :author_id => current_user.id, :conversation_id => @conversation.id)
         end
       end
@@ -51,34 +51,49 @@ class ConversationsController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to @conversation, notice: 'Conversation was successfully created.' }
-      format.json { render :show, status: :created, location: @conversation }
     end
   end
 
   # PATCH/PUT /conversations/1
   # PATCH/PUT /conversations/1.json
   def update
-    flag = false
-    begin
-      @conversation.transaction do
-        message = Message.create!(message_params)
-        @conversation.update!(:updated_at => Time.now)
-        @conversation.users.uniq.each do |user|
-          Recipient.create!(:message_id => message.id, :user_id => user.id, :author_id => current_user.id, :conversation_id => @conversation.id)
-        end
-        flag = true
-      end
-    rescue => e
-      flag = false
+    @conversation.assign_attributes(:subject => conversation_params[:subject])
+    if @conversation.invalid?
+      render :edit
+      return
     end
-    respond_to do |format|
-      if flag
-        format.html { redirect_to @conversation }
-        format.json { render :show, status: :ok, location: @conversation }
-      else
-        format.html { redirect_to @conversation, notice: "Message cant be blank" }
-        format.json { render json: @conversation.errors, status: :unprocessable_entity }
+
+    @conversation.transaction do
+      @conversation.save!
+      conversation_params[:user_ids].each do |user|
+        if user.present?
+          Recipient.create!(:user_id => user.to_i, :conversation_id => @conversation.id)
+        end
       end
+    end
+
+    respond_to do |format|
+      format.html { redirect_to @conversation }
+    end
+  end
+
+  def create_message
+    message = Message.new(message_params)
+    if message.invalid?
+      redirect_to @conversation, notice: 'Message cant be blank'
+      return
+    end
+
+    @conversation.transaction do
+      message.save!
+      @conversation.update_attribute(:updated_at, Time.now)
+      @conversation.users.uniq.each do |user|
+        Recipient.create!(:message_id => message.id, :user_id => user.id, :author_id => current_user.id, :conversation_id => @conversation.id)
+      end
+    end
+
+    respond_to do |format|
+      format.html { redirect_to @conversation }
     end
   end
 
@@ -88,7 +103,6 @@ class ConversationsController < ApplicationController
     Recipient.where(:conversation_id => @conversation.id, :user_id => current_user.id).update_all(deleted: true)
     respond_to do |format|
       format.html { redirect_to conversations_url, notice: 'Conversation was successfully destroyed.' }
-      format.json { head :no_content }
     end
   end
 
