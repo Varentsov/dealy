@@ -1,6 +1,5 @@
 class ConversationsController < ApplicationController
   before_action :set_conversation, only: [:show, :edit, :update, :destroy, :create_message]
-  before_action :logged_user
   before_action :allowed_user, except: [:index, :new, :create]
 
 

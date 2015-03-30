@@ -1,0 +1,32 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @group.name %>
+</p>
+
+<% if @group.account.present? %>
+    <p>
+      <strong>Account:</strong>
+      <%= @group.account %>
+    </p>
+<% end %>
+
+<% if @group.root_group.present? %>
+    <p>
+      <strong>Root group:</strong>
+      <%= link_to @group.root_group.name, @group.root_group %>
+    </p>
+<% end %>
+
+<% if @group.parent_group.present? %>
+    <p>
+      <strong>Parent group:</strong>
+      <%= link_to @group.parent_group.name, @group.parent_group %>
+    </p>
+<% end %>
+
+<%= nested_groups @children.arrange(:order => :created_at) %>
+
+<%= link_to 'Edit', edit_group_path(@group) %> |
+<%= link_to 'Back', groups_path %>

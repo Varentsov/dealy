@@ -50,3 +50,5 @@ group :development do
   gem 'bullet'
 end
 
+# For tree-like groups
+gem 'ancestry', '~> 2.1.0'

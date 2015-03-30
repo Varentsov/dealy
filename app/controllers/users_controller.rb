@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
 
+  skip_before_action :logged_user, only: [:new, :create, :show]
+
   def index
     @users = User.all
   end
@@ -36,7 +38,6 @@ class UsersController < ApplicationController
   def update
     @user = User.find(params[:id])
     params[:user].delete(:password) if params[:user][:password].blank?
-    logger.debug user_params
     respond_to do |format|
       if @user.update(user_params)
         format.html { redirect_to @user, notice: 'Profile updated'}

@@ -1,6 +1,6 @@
 class TasksController < ApplicationController
   before_action :set_task, only: [:show, :edit, :update, :destroy, :complete]
-  before_action :logged_user, except: [:index]
+  skip_before_action :logged_user, only: [:index]
 
   # GET /tasks
   # GET /tasks.json

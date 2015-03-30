@@ -1,5 +1,6 @@
 class SessionsController < ApplicationController
   before_action :check_if_already_logged, except: :destroy
+  skip_before_action :logged_user, except: :destroy
 
   def new
   end

@@ -11,13 +11,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150328184504) do
+ActiveRecord::Schema.define(version: 20150330141500) do
 
   create_table "conversations", force: :cascade do |t|
     t.string   "subject",    default: ""
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
   end
+
+  create_table "employees", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "group_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "employees", ["group_id"], name: "index_employees_on_group_id"
+  add_index "employees", ["user_id"], name: "index_employees_on_user_id"
+
+  create_table "groups", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "account_id"
+    t.integer  "root_id"
+    t.integer  "parent_id"
+    t.integer  "account_state", default: 0
+    t.string   "ancestry"
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "groups", ["account_id"], name: "index_groups_on_account_id"
+  add_index "groups", ["ancestry"], name: "index_groups_on_ancestry"
+  add_index "groups", ["parent_id"], name: "index_groups_on_parent_id"
+  add_index "groups", ["root_id"], name: "index_groups_on_root_id"
 
   create_table "messages", force: :cascade do |t|
     t.string   "title"
@@ -68,5 +94,16 @@ ActiveRecord::Schema.define(version: 20150328184504) do
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
   add_index "users", ["remember_token"], name: "index_users_on_remember_token"
+
+  create_table "workspaces", force: :cascade do |t|
+    t.string   "name",       default: ""
+    t.integer  "group_id"
+    t.integer  "user_id"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  add_index "workspaces", ["group_id"], name: "index_workspaces_on_group_id"
+  add_index "workspaces", ["user_id"], name: "index_workspaces_on_user_id"
 
 end

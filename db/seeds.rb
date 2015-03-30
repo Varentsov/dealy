@@ -6,8 +6,14 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-User.where.not(:email => 'neck.varentsov@gmail.com').delete_all
-for i in 0...100
-  User.create(email: "#{i}@gmail.com", password: '123123', first_name: i.to_s, last_name: i.to_s)
-  puts i
+if Rails.env == 'development'
+  User.where.not(:email => 'neck.varentsov@gmail.com').delete_all
+  Group.delete_all
+  Workspace.delete_all
+  Recipient.delete_all
+  Message.delete_all
+  for i in 0...100
+    User.create!(email: "user#{i}@gmail.com", password: '123123', first_name: i.to_s, last_name: i.to_s)
+    puts i
+  end
 end

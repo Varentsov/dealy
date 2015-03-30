@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
 
 
+  resources :workspaces
+
+  resources :groups
+
   resources :conversations do
     member do
       post 'create_message'
