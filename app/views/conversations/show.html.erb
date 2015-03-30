@@ -10,7 +10,7 @@
           <strong>Body:</strong>
           <%= recipient.message.body %><br />
           <strong>Author:</strong>
-          <%= User.find(recipient.author_id).last_name %>
+          <%= recipient.author.last_name %>
         </p>
         <br />
       <% end %>

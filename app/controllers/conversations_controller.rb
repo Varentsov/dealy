@@ -15,6 +15,8 @@ class ConversationsController < ApplicationController
   def show
     @recipients = @conversation.recipients.where(:user_id => current_user.id).includes(:message).order(:created_at => :asc)
     @message = Message.new
+
+    @recipients.mark_as_read
   end
 
   # GET /conversations/new
@@ -41,7 +43,7 @@ class ConversationsController < ApplicationController
     @conversation.transaction do
       @message.save!
       @conversation.save!
-      Recipient.create!(:message_id => @message.id, :user_id => current_user.id, :author_id => current_user.id, :conversation_id => @conversation.id)
+      Recipient.create!(:message_id => @message.id, :user_id => current_user.id, :author_id => current_user.id, :conversation_id => @conversation.id, :read => true)
       conversation_params[:user_ids].each do |user|
         if user.present?
           Recipient.create!(:message_id => @message.id, :user_id => user.to_i, :author_id => current_user.id, :conversation_id => @conversation.id)
@@ -90,7 +92,11 @@ class ConversationsController < ApplicationController
       message.save!
       @conversation.update_attribute(:updated_at, Time.now)
       @conversation.users.uniq.each do |user|
-        Recipient.create!(:message_id => message.id, :user_id => user.id, :author_id => current_user.id, :conversation_id => @conversation.id)
+        if user.id != current_user.id
+          Recipient.create!(:message_id => message.id, :user_id => user.id, :author_id => current_user.id, :conversation_id => @conversation.id)
+        else
+          Recipient.create!(:message_id => message.id, :user_id => user.id, :author_id => current_user.id, :conversation_id => @conversation.id, :read => true)
+        end
       end
     end
 
