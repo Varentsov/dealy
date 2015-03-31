@@ -3,7 +3,13 @@ Rails.application.routes.draw do
 
   resources :workspaces
 
-  resources :groups
+  resources :groups do
+    member do
+      get     'edit_users'
+      patch   'add_users'
+      patch   'delete_users'
+    end
+  end
 
   resources :conversations do
     member do

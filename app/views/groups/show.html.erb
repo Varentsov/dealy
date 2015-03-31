@@ -1,9 +1,9 @@
-<p id="notice"><%= notice %></p>
-
-<p>
-  <strong>Name:</strong>
-  <%= @group.name %>
-</p>
+<div class="" style="width: 250px;">
+    <p>
+      <strong>Name:</strong>
+      <h1><%= @group.name %></h1>
+    </p>
+</div>
 
 <% if @group.account.present? %>
     <p>
@@ -26,7 +26,9 @@
     </p>
 <% end %>
 
+<h3>Связанные группы:</h3>
 <%= nested_groups @children.arrange(:order => :created_at) %>
 
+<%= link_to 'Edit employees', edit_users_group_path(@group) %> |
 <%= link_to 'Edit', edit_group_path(@group) %> |
 <%= link_to 'Back', groups_path %>

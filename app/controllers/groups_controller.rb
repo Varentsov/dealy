@@ -1,5 +1,6 @@
 class GroupsController < ApplicationController
-  before_action :set_group, only: [:show, :edit, :update, :destroy]
+  before_action :set_group, only: [:show, :edit, :update, :destroy, :add_users, :edit_users, :delete_users]
+  before_action :users_in_tree, only: [:add_users, :edit_users]
 
 
   # GET /groups
@@ -26,15 +27,11 @@ class GroupsController < ApplicationController
   # POST /groups
   # POST /groups.json
   def create
-    if params[:group][:parent_id].present?
-      @group = Group.new(group_params)
-    else
-      @group = Group.new(group_params)
-    end
+    @group = Group.new(group_params)
 
     respond_to do |format|
       if @group.save
-        if params[:group][:root_id].blank?
+        if @group.parent.nil?
           Employee.create!(:user_id => current_user.id, :group_id => @group.id)
         end
         format.html { redirect_to @group, notice: 'Group was successfully created.' }
@@ -60,6 +57,33 @@ class GroupsController < ApplicationController
     end
   end
 
+  def edit_users
+  end
+
+  def add_users
+    if params[:group][:user_ids].present? && !invalid_user_ids?(params[:group][:user_ids])
+      Employee.transaction do
+        params[:group][:user_ids].each do |user|
+          Employee.create!(:user_id => user.to_i, :group_id => @group.id) if user.present?
+        end
+      end
+      redirect_to @group, notice: 'Users add'
+    else
+      @group.errors.add(:user_ids, 'Cant be blank')
+      render :edit_users
+    end
+  end
+
+  def delete_users
+    if params[:group][:user_ids].present? && !invalid_user_ids?(params[:group][:user_ids])
+      Employee.where(:group_id => @group.id, :user_id => params[:group][:user_ids]).delete_all
+      redirect_to @group, notice: 'Users deleted'
+    else
+      @group.errors.add(:user_ids, 'Cant be blank')
+      render :edit_users
+    end
+  end
+
   # DELETE /groups/1
   # DELETE /groups/1.json
   def destroy
@@ -79,5 +103,18 @@ class GroupsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def group_params
       params.require(:group).permit(:name, :account_id, :root_id, :parent_id, :account_state)
+    end
+
+    def invalid_user_ids?(user_ids)
+      if user_ids.first.blank? && user_ids.size == 1
+        true
+      else
+        false
+      end
+    end
+
+    def users_in_tree
+      @users_in_tree = []
+      @group.root.subtree.each { |group| group.user_ids.each { |id| @users_in_tree << id }}
     end
 end

@@ -1,0 +1,47 @@
+<h2>Добавить пользователей</h2>
+<%= form_for @group, url: add_users_group_path do |f| %>
+    <% if @group.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@group.errors.count, "error") %> prohibited this group from being saved:</h2>
+
+          <ul>
+            <% @group.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+    <div class="field">
+      <%= f.label :user_ids %><br>
+      <%= f.collection_select :user_ids, User.where.not(:id => @users_in_tree), :id, :name, {  }, { multiple: true } %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+<% end %>
+
+<h2>Удалить пользователей</h2>
+<%= form_for @group, url: delete_users_group_path do |f| %>
+    <% if @group.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@group.errors.count, "error") %> prohibited this group from being saved:</h2>
+
+          <ul>
+            <% @group.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+    <% end %>
+
+    <div class="field">
+      <%= f.label :user_ids %><br>
+      <%= f.collection_select :user_ids, User.where(:id => @group.user_ids), :id, :name, { selected: false }, { multiple: true } %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+<% end %>
