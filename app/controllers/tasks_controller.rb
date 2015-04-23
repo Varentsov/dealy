@@ -1,19 +1,20 @@
 class TasksController < ApplicationController
-  before_action :set_task, only: [:show, :edit, :update, :destroy, :complete]
-  skip_before_action :logged_user, only: [:index]
+  before_action :set_task, only: [:show, :edit, :update, :destroy, :complete, :delegate]
 
   # GET /tasks
   # GET /tasks.json
   def index
-    @today_tasks_sorted = Task.where.not(:sort_value => nil, :finished => true).order(:sort_value => :asc)
-    @today_tasks_over_deadline = Task.where("finished = ? AND deadline < ?", false, Date.today.beginning_of_day).order(:fire => :desc, :deadline => :asc) - @today_tasks_sorted
-    @today_tasks_normal = Task.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.beginning_of_day, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_sorted
-    @next_tasks = Task.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.end_of_day, (Date.today + 7).end_of_day, Task.planning_states[:to_next]).order(:fire => :desc, :deadline => :asc)- @today_tasks_over_deadline - @today_tasks_sorted - @today_tasks_normal
-    @other_tasks = Task.where(:finished => false).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_normal - @next_tasks - @today_tasks_sorted
+    @today_tasks_sorted = current_employee.tasks.where.not(:sort_value => nil, :finished => true).order(:sort_value => :asc)
+    @today_tasks_over_deadline = current_employee.tasks.where("finished = ? AND deadline < ?", false, Date.today.beginning_of_day).order(:fire => :desc, :deadline => :asc) - @today_tasks_sorted
+    @today_tasks_normal = current_employee.tasks.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.beginning_of_day, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_sorted
+    @next_tasks = current_employee.tasks.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.end_of_day, (Date.today + 7).end_of_day, Task.planning_states[:to_next]).order(:fire => :desc, :deadline => :asc)- @today_tasks_over_deadline - @today_tasks_sorted - @today_tasks_normal
+    @other_tasks = current_employee.tasks.where(:finished => false).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_normal - @next_tasks - @today_tasks_sorted
+
+    @groups = current_user.groups
   end
 
   def all_tasks
-    @tasks = Task.order(:finished => :asc, :fire => :desc, :deadline => :asc)
+    @tasks = current_employee.tasks.order(:finished => :asc, :fire => :desc, :deadline => :asc)
   end
 
   # GET /tasks/1
@@ -37,6 +38,7 @@ class TasksController < ApplicationController
 
     respond_to do |format|
       if @task.save
+        EmployeeTask.create!(:employee_id => current_employee.id, :task_id => @task.id)
         format.html { redirect_to @task, notice: 'Task was successfully created.' }
         format.json { render :show, status: :created, location: @task }
       else
@@ -98,6 +100,11 @@ class TasksController < ApplicationController
       format.html { redirect_to :back }
       format.json {}
     end
+  end
+
+  def delegate
+    @task.delegate(current_employee.id, params[:employee_id])
+    redirect_to root_path
   end
 
   private

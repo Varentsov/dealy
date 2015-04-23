@@ -94,6 +94,12 @@ class GroupsController < ApplicationController
     end
   end
 
+  def set_workspace
+    group = Group.find(params[:workspace])
+    session[:workspace] = params[:workspace] if current_user.groups.include? group
+    redirect_to tasks_url
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_group

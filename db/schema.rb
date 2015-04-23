@@ -11,13 +11,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150330141500) do
+ActiveRecord::Schema.define(version: 20150421120316) do
 
   create_table "conversations", force: :cascade do |t|
     t.string   "subject",    default: ""
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
   end
+
+  create_table "employee_tasks", force: :cascade do |t|
+    t.integer  "employee_id"
+    t.integer  "task_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "employee_tasks", ["employee_id"], name: "index_employee_tasks_on_employee_id"
+  add_index "employee_tasks", ["task_id"], name: "index_employee_tasks_on_task_id"
 
   create_table "employees", force: :cascade do |t|
     t.integer  "user_id"
@@ -94,16 +104,5 @@ ActiveRecord::Schema.define(version: 20150330141500) do
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
   add_index "users", ["remember_token"], name: "index_users_on_remember_token"
-
-  create_table "workspaces", force: :cascade do |t|
-    t.string   "name",       default: ""
-    t.integer  "group_id"
-    t.integer  "user_id"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
-  end
-
-  add_index "workspaces", ["group_id"], name: "index_workspaces_on_group_id"
-  add_index "workspaces", ["user_id"], name: "index_workspaces_on_user_id"
 
 end

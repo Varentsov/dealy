@@ -17,6 +17,20 @@
     <option>Наша группа</option>
   </select>
 </div> -->
+<div class="forms">
+  <%= form_tag set_workspace_groups_path do %>
+      <select id="workspace" name="workspace" class="form-control forms-css", onchange="form.submit()">
+        <% @groups.each do |group| %>
+            <option value="<%= group.id %>"
+                    <% if session[:workspace].present? %>
+                    <%= session[:workspace].to_i == group.id ? 'selected=selected' : '' %>
+                    <% end %>
+                    ><%= group.name %>
+            </option>
+        <% end %>
+      </select>
+  <% end %>
+</div>
 <div class="layout">
   <div class="left-column">
     <div class="panel panel-default">

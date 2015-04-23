@@ -1,13 +1,15 @@
 Rails.application.routes.draw do
 
-
-  resources :workspaces
+  get 'welcome/index'
 
   resources :groups do
     member do
       get     'edit_users'
       patch   'add_users'
       patch   'delete_users'
+    end
+    collection do
+      post    'set_workspace'
     end
   end
 
@@ -33,6 +35,7 @@ Rails.application.routes.draw do
     end
     member do
       get 'complete'
+      post 'delegate'
     end
   end
 
@@ -40,7 +43,7 @@ Rails.application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  root 'tasks#index'
+  root 'welcome#index'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

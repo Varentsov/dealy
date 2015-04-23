@@ -5,6 +5,7 @@ class Group < ActiveRecord::Base
   has_many :employees
   has_many :users, through: :employees
   has_ancestry
+  after_create :create_employee_for_new_user, if: lambda { |group| group.account_id.present? }
 
 
   validates_presence_of :name
@@ -12,6 +13,10 @@ class Group < ActiveRecord::Base
 
 
   private
+
+    def create_employee_for_new_user
+      Employee.create!(:group_id => id, :user_id => account_id)
+    end
 
     def parent_group_presence
       if root_id.present?

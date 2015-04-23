@@ -21,6 +21,12 @@ module SessionsHelper
   def sign_out
     current_user.update_attribute(:remember_token, User.encrypt(User.new_remember_token))
     cookies.delete(:remember_token)
+    session.delete(:workspace)
     self.current_user = nil
+  end
+
+  def current_employee
+    session[:workspace] ||= Group.where(:account_id => current_user.id).take.id
+    @employee = Employee.where(:user_id => current_user.id, :group_id => session[:workspace]).take
   end
 end
