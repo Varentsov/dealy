@@ -12,7 +12,7 @@ class ConversationsController < ApplicationController
   # GET /conversations/1
   # GET /conversations/1.json
   def show
-    @recipients = @conversation.recipients.where(:user_id => current_user.id).includes(:message).order(:created_at => :asc)
+    @recipients = @conversation.recipients.where(:user_id => current_user.id).includes(:message, :author).order(:created_at => :asc)
     @message = Message.new
 
     @recipients.mark_as_read

@@ -15,7 +15,7 @@ class TasksController < ApplicationController
   end
 
   def all_tasks
-    @tasks = current_employee.tasks.order(:finished => :asc, :fire => :desc, :deadline => :asc)
+    @employees = Employee.where(:user_id => current_user.id).includes(:tasks, :group)
   end
 
   # GET /tasks/1
@@ -112,8 +112,8 @@ class TasksController < ApplicationController
   private
 
     def allowed_user
-      if not current_employee.task_ids.include?(@task.id)
-        redirect_to tasks_url, notice: 'Недостаточно прав'
+      if (current_user.employee_ids & @task.employee_ids).empty?
+        redirect_to tasks_url, notice: 'Недостаточно прав для просмотра'
       end
     end
 

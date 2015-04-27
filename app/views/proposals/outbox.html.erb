@@ -1,30 +1,30 @@
-<h1>Listing Proposals</h1>
+<% @employees.each do |employee| %>
+    <% if employee.outbox_proposals.present? %>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <%= employee.group.present? ? (employee.group.name + ' (' + employee.outbox_proposals.count.to_s + ')') : '' %>
+          </div>
+          <table class="table">
+            <thead>
+            <tr>
+              <th>Task</th>
+              <th>Receiver</th>
+              <th colspan="3"></th>
+            </tr>
+            </thead>
 
-<table>
-  <thead>
-  <tr>
-    <th>Task</th>
-    <th>Receiver</th>
-    <th colspan="3"></th>
-  </tr>
-  </thead>
-
-  <tbody>
-  <% @employees.each do |employee| %>
-      <% if employee.outbox_proposals.present? %>
-          <tr>
-            <td><%= employee.group.present? ? (employee.group.name + ' (' + employee.outbox_proposals.count.to_s + ')') : '' %></td>
-          </tr>
-      <% end %>
-      <% employee.outbox_proposals.includes(:task, :supplier).each do |proposal| %>
-          <tr>
-            <td><%= proposal.task.title %></td>
-            <td><%= proposal.supplier.user_name %></td>
-            <td><%= link_to 'Show', proposal %></td>
-            <td><%= link_to 'Edit', edit_proposal_path(proposal) %></td>
-            <td><%= link_to 'Destroy', proposal, method: :delete, data: {confirm: 'Are you sure?'} %></td>
-          </tr>
-      <% end %>
-  <% end %>
-  </tbody>
-</table>
+            <tbody>
+            <% employee.outbox_proposals.includes(:task).each do |proposal| %>
+                <tr>
+                  <td><%= link_to proposal.task.title, proposal %></td>
+                  <td><%= link_to proposal.receiver.user_name, proposal.receiver.user %></td>
+                  <td><%= link_to 'Show', proposal %></td>
+                  <td><%= link_to 'Edit', edit_proposal_path(proposal) %></td>
+                  <td><%= link_to 'Destroy', proposal, method: :delete, data: {confirm: 'Are you sure?'} %></td>
+                </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+    <% end %>
+<% end %>
