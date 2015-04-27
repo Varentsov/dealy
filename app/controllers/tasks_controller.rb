@@ -1,5 +1,6 @@
 class TasksController < ApplicationController
   before_action :set_task, only: [:show, :edit, :update, :destroy, :complete, :delegate]
+  before_action :allowed_user, except: [:new, :create, :index, :all_tasks, :clear_sort, :edit_sort]
 
   # GET /tasks
   # GET /tasks.json
@@ -103,11 +104,19 @@ class TasksController < ApplicationController
   end
 
   def delegate
-    @task.delegate(current_employee.id, params[:employee_id])
-    redirect_to root_path
+    proposal = Proposal.create!(:task_id => @task.id, :supplier_id => current_employee.id, :receiver_id => params[:employee_id])
+    emp_task = current_employee.employee_tasks.where(:task_id => @task.id).take.update_attribute(:state, :delegating)
+    redirect_to root_path, notice: "Заявка отправлена"
   end
 
   private
+
+    def allowed_user
+      if not current_employee.task_ids.include?(@task.id)
+        redirect_to tasks_url, notice: 'Недостаточно прав'
+      end
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_task
       @task = Task.find(params[:id])

@@ -1,5 +1,14 @@
 Rails.application.routes.draw do
 
+  resources :proposals do
+    member do
+      get 'accept'
+    end
+    collection do
+      get 'outbox'
+    end
+  end
+
   get 'welcome/index'
 
   resources :groups do

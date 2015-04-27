@@ -1,0 +1,28 @@
+<p>
+  Входящая завявка от пользователя <%= link_to @proposal.supplier.user.name, @proposal.supplier.user %>
+</p>
+
+<p>
+  <strong>Task:</strong>
+  <%= @proposal.task.title %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @proposal.task.description %>
+</p>
+
+<p>
+  <strong>Deadline:</strong>
+  <%= @proposal.task.deadline %>
+</p>
+
+<p>
+  <strong>Fire:</strong>
+  <%= @proposal.task.fire %>
+</p>
+
+
+
+<%= link_to 'Принять задачу', accept_proposal_path(@proposal) %> |
+<%= link_to 'Назад', proposals_path %>

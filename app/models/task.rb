@@ -5,7 +5,7 @@ class Task < ActiveRecord::Base
   has_many :employees, through: :employee_tasks
 
   def delegate(from_employee_id, to_employee_id)
-    EmployeeTask.where(:employee_id => from_employee_id, :task_id => id).update_all(:employee_id => to_employee_id)
+    EmployeeTask.unscoped.where(:employee_id => from_employee_id, :task_id => id).take.update_attributes(:employee_id => to_employee_id, :state => :active)
   end
 
 

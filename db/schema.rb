@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150421120316) do
+ActiveRecord::Schema.define(version: 20150426171201) do
 
   create_table "conversations", force: :cascade do |t|
     t.string   "subject",    default: ""
@@ -22,8 +22,9 @@ ActiveRecord::Schema.define(version: 20150421120316) do
   create_table "employee_tasks", force: :cascade do |t|
     t.integer  "employee_id"
     t.integer  "task_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.integer  "state",       default: 0
   end
 
   add_index "employee_tasks", ["employee_id"], name: "index_employee_tasks_on_employee_id"
@@ -61,6 +62,18 @@ ActiveRecord::Schema.define(version: 20150421120316) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "proposals", force: :cascade do |t|
+    t.integer  "task_id"
+    t.integer  "supplier_id"
+    t.integer  "receiver_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "proposals", ["receiver_id"], name: "index_proposals_on_receiver_id"
+  add_index "proposals", ["supplier_id"], name: "index_proposals_on_supplier_id"
+  add_index "proposals", ["task_id"], name: "index_proposals_on_task_id"
 
   create_table "recipients", force: :cascade do |t|
     t.integer  "user_id"
