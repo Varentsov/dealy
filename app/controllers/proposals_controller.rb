@@ -1,14 +1,15 @@
 class ProposalsController < ApplicationController
   before_action :set_proposal, only: [:show, :edit, :update, :destroy, :accept]
+  before_action :allowed_user, except: [:index, :outbox, :new]
 
   # GET /proposals
   # GET /proposals.json
   def index
-    @proposals = Proposal.where(:receiver_id => current_employee.id)
+    @employees = Employee.where(:user_id => current_user.id).includes(:inbox_proposals, :group)
   end
 
   def outbox
-    @proposals = Proposal.where(:supplier_id => current_employee.id)
+    @employees = Employee.where(:user_id => current_user.id).includes(:outbox_proposals, :group)
   end
 
   # GET /proposals/1
@@ -74,6 +75,14 @@ class ProposalsController < ApplicationController
   end
 
   private
+
+    def allowed_user
+      if current_user.employee_ids.include?(@proposal.supplier_id) or current_user.employee_ids.include?(@proposal.receiver_id)
+      else
+        redirect_to root_path, notice: "У вас нет прав для просмотра"
+      end
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_proposal
       @proposal = Proposal.find(params[:id])

@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Dealyzator</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
@@ -10,28 +10,31 @@
 <header>
   <nav class="navbar navbar-default">
     <div class="container-fluid">
-        <%= link_to 'Dealy', root_url, class: 'navbar-brand' %>
-        <ul class="nav navbar-nav">
-          <li><%= link_to 'Новая задача', new_task_path %></li>
-          <li><%= link_to 'Все задачи', all_tasks_tasks_path %></li>
-          <li><%= link_to 'Входящие', proposals_path %></li>
-          <li><%= link_to 'Исходящие', outbox_proposals_path %></li>
-          <li><%= link_to 'Сообщения', conversations_path %></li>
-          <li><%= link_to 'Группы', groups_path %></li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <% if signed_in? %>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><%= current_user.last_name %> <span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li><%= link_to 'Профиль', current_user %></li>
-                  <li><%= link_to 'Выход', sign_out_path, method: :delete %></li>
-                </ul>
-              </li>
-          <% else %>
-              <li><%= link_to 'Вход', sign_in_path %></li>
-          <% end %>
-        </ul>
+      <%= link_to 'Dealy', root_url, class: 'navbar-brand' %>
+      <% if signed_in? %>
+      <ul class="nav navbar-nav">
+        <li><%= link_to 'Новая задача', new_task_path %></li>
+        <li><%= link_to 'Все задачи', all_tasks_tasks_path %></li>
+        <li><%= link_to "Входящие (#{inbox_proposals_count})", proposals_path %></li>
+        <li><%= link_to "Исходящие (#{outbox_proposals_count})", outbox_proposals_path %></li>
+        <li><%= link_to 'Сообщения', conversations_path %></li>
+        <li><%= link_to 'Группы', groups_path %></li>
+      </ul>
+      <% end %>
+      <ul class="nav navbar-nav navbar-right">
+        <% if signed_in? %>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><%= current_user.last_name %>
+                <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><%= link_to 'Профиль', current_user %></li>
+                <li><%= link_to 'Выход', sign_out_path, method: :delete %></li>
+              </ul>
+            </li>
+        <% else %>
+            <li><%= link_to 'Вход', sign_in_path %></li>
+        <% end %>
+      </ul>
     </div>
   </nav>
 </header>

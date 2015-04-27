@@ -2,26 +2,29 @@
 
 <table>
   <thead>
-    <tr>
-      <th>Task</th>
-      <th>Receiver</th>
-      <th colspan="3"></th>
-    </tr>
+  <tr>
+    <th>Task</th>
+    <th>Receiver</th>
+    <th colspan="3"></th>
+  </tr>
   </thead>
 
   <tbody>
-    <% @proposals.each do |proposal| %>
-      <tr>
-        <td><%= proposal.task.title %></td>
-        <td><%= proposal.receiver.user_name %></td>
-        <td><%= link_to 'Show', proposal %></td>
-        <td><%= link_to 'Edit', edit_proposal_path(proposal) %></td>
-        <td><%= link_to 'Destroy', proposal, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
+  <% @employees.each do |employee| %>
+      <% if employee.outbox_proposals.present? %>
+          <tr>
+            <td><%= employee.group.present? ? (employee.group.name + ' (' + employee.outbox_proposals.count.to_s + ')') : '' %></td>
+          </tr>
+      <% end %>
+      <% employee.outbox_proposals.includes(:task, :supplier).each do |proposal| %>
+          <tr>
+            <td><%= proposal.task.title %></td>
+            <td><%= proposal.supplier.user_name %></td>
+            <td><%= link_to 'Show', proposal %></td>
+            <td><%= link_to 'Edit', edit_proposal_path(proposal) %></td>
+            <td><%= link_to 'Destroy', proposal, method: :delete, data: {confirm: 'Are you sure?'} %></td>
+          </tr>
+      <% end %>
+  <% end %>
   </tbody>
 </table>
-
-<br>
-
-<%= link_to 'New Proposal', new_proposal_path %>
