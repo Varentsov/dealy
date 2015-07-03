@@ -12,17 +12,10 @@
     </p>
 <% end %>
 
-<% if @group.root_group.present? %>
+<% if @group.root.present? %>
     <p>
       <strong>Root group:</strong>
-      <%= link_to @group.root_group.name, @group.root_group %>
-    </p>
-<% end %>
-
-<% if @group.parent_group.present? %>
-    <p>
-      <strong>Parent group:</strong>
-      <%= link_to @group.parent_group.name, @group.parent_group %>
+      <%= link_to @group.root.name, @group.root %>
     </p>
 <% end %>
 

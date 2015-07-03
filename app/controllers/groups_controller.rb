@@ -108,7 +108,7 @@ class GroupsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def group_params
-      params.require(:group).permit(:name, :account_id, :root_id, :parent_id, :account_state)
+      params.require(:group).permit(:name, :parent_id)
     end
 
     def invalid_user_ids?(user_ids)
