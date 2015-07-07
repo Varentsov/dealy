@@ -16,20 +16,8 @@
     <%= f.text_field :name %>
   </div>
   <div class="field">
-    <%= f.label :account_id %><br>
-    <%= f.collection_select :account_id, User.all, :id, :name, { prompt: true }, {} %>
-  </div>
-  <div class="field">
-    <%= f.label :root_id %><br>
-    <%= f.collection_select :root_id, Group.all, :id, :name, {prompt: true}, {} %>
-  </div>
-  <div class="field">
     <%= f.label :parent_id %><br>
-    <%= f.collection_select :parent_id, Group.all, :id, :name, {prompt: true}, {} %>
-  </div>
-  <div class="field">
-    <%= f.label :account_state %><br>
-    <%= f.number_field :account_state %>
+    <%= f.collection_select :parent_id, Group.where(:account_id => nil), :id, :name, {prompt: true, selected: params[:group].present? ? params[:group][:parent_id] : ''}, {} %>
   </div>
   <div class="actions">
     <%= f.submit %>

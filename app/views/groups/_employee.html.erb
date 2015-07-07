@@ -1,4 +1,5 @@
 Сотрудники:<br />
 <% group.users.each do |user| %>
-    <%= user.name %><br />
+    <%= link_to user.name, user %><br />
 <% end %>
+<br />

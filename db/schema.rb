@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150426171201) do
+ActiveRecord::Schema.define(version: 20150703090112) do
 
   create_table "conversations", force: :cascade do |t|
     t.string   "subject",    default: ""
@@ -43,8 +43,6 @@ ActiveRecord::Schema.define(version: 20150426171201) do
   create_table "groups", force: :cascade do |t|
     t.string   "name"
     t.integer  "account_id"
-    t.integer  "root_id"
-    t.integer  "parent_id"
     t.integer  "account_state", default: 0
     t.string   "ancestry"
     t.datetime "created_at",                null: false
@@ -53,8 +51,6 @@ ActiveRecord::Schema.define(version: 20150426171201) do
 
   add_index "groups", ["account_id"], name: "index_groups_on_account_id"
   add_index "groups", ["ancestry"], name: "index_groups_on_ancestry"
-  add_index "groups", ["parent_id"], name: "index_groups_on_parent_id"
-  add_index "groups", ["root_id"], name: "index_groups_on_root_id"
 
   create_table "messages", force: :cascade do |t|
     t.string   "title"
