@@ -13,4 +13,12 @@ class ApplicationController < ActionController::Base
         redirect_to sign_in_path, notice: 'You should sign in or sign up'
       end
     end
+
+    def redirect_to_back_or_default(*args)
+      if request.env['HTTP_REFERER'].present? && request.env['HTTP_REFERER'] != request.env['REQUEST_URI']
+        redirect_to :back, *args
+      else
+        redirect_to root_url, *args
+      end
+    end
 end

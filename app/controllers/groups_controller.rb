@@ -97,7 +97,7 @@ class GroupsController < ApplicationController
   def set_workspace
     group = Group.find(params[:workspace])
     session[:workspace] = params[:workspace] if current_user.groups.include? group
-    redirect_to tasks_url
+    redirect_to :back
   end
 
   private

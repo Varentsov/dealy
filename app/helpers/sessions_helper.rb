@@ -29,4 +29,9 @@ module SessionsHelper
     session[:workspace] ||= Group.where(:account_id => current_user.id).take.id
     @employee = Employee.where(:user_id => current_user.id, :group_id => session[:workspace]).take
   end
+
+  def current_workspace
+    session[:workspace] ||= Group.where(:account_id => current_user.id).take.id
+    @group = Group.find(session[:workspace])
+  end
 end

@@ -62,7 +62,7 @@ class ProposalsController < ApplicationController
     EmployeeTask.unscoped.where(:employee_id => @proposal.supplier_id, :task_id => @proposal.task_id).take.update_attribute(:state, :active)
     @proposal.destroy
     respond_to do |format|
-      format.html { redirect_to proposals_url, notice: 'Proposal was successfully destroyed.' }
+      format.html { redirect_to_back_or_default notice: 'Proposal was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

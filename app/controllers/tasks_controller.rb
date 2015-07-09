@@ -10,8 +10,6 @@ class TasksController < ApplicationController
     @today_tasks_normal = current_employee.tasks.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.beginning_of_day, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_sorted
     @next_tasks = current_employee.tasks.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.end_of_day, (Date.today + 7).end_of_day, Task.planning_states[:to_next]).order(:fire => :desc, :deadline => :asc)- @today_tasks_over_deadline - @today_tasks_sorted - @today_tasks_normal
     @other_tasks = current_employee.tasks.where(:finished => false).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_normal - @next_tasks - @today_tasks_sorted
-
-    @groups = current_user.groups
   end
 
   def all_tasks
@@ -40,6 +38,9 @@ class TasksController < ApplicationController
     respond_to do |format|
       if @task.save
         EmployeeTask.create!(:employee_id => current_employee.id, :task_id => @task.id)
+        if params[:employee_id].present? && params[:employee_id].to_i != current_employee.id
+          @task.prepare_to_delegate(current_employee.id, params[:employee_id].to_i)
+        end
         format.html { redirect_to @task, notice: 'Task was successfully created.' }
         format.json { render :show, status: :created, location: @task }
       else
@@ -105,14 +106,14 @@ class TasksController < ApplicationController
 
   def delegate
     proposal = Proposal.create!(:task_id => @task.id, :supplier_id => current_employee.id, :receiver_id => params[:employee_id])
-    emp_task = current_employee.employee_tasks.where(:task_id => @task.id).take.update_attribute(:state, :delegating)
+    emp_task = current_employee.employee_tasks.where(:task_id => @task.id).take.update_attribute(:state, :delegated)
     redirect_to root_path, notice: "Заявка отправлена"
   end
 
   private
 
     def allowed_user
-      if (current_user.employee_ids & @task.employee_ids).empty?
+      if (current_user.employee_ids & (EmployeeTask.unscoped { @task.employee_ids })).empty?
         redirect_to tasks_url, notice: 'Недостаточно прав для просмотра'
       end
     end

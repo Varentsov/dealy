@@ -31,7 +31,7 @@
   <%= form_tag delegate_task_path do %>
       <div class="field">
         <%= label_tag :employee_id, 'Делегировать задачу пользователю' %><br />
-        <%= select_tag :employee_id, options_from_collection_for_select(current_employee.group.employees.where.not(:id => current_employee.id), :id, :user_name) %>
+        <%= select_tag :employee_id, options_from_collection_for_select(current_workspace.employees.where.not(:id => current_employee.id), :id, :user_name), prompt: 'Выбрать исполнителя' %>
       </div>
       <div class="actions">
         <%= submit_tag 'Делегировать' %>
