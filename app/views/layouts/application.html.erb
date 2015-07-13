@@ -15,6 +15,7 @@
       <ul class="nav navbar-nav">
         <li><%= link_to 'Новая задача', new_task_path %></li>
         <li><%= link_to 'Все задачи', all_tasks_tasks_path %></li>
+        <li><%= link_to 'На контроле', in_control_tasks_path %></li>
         <li><%= link_to "Входящие (#{inbox_proposals_count})", proposals_path %></li>
         <li><%= link_to "Исходящие (#{outbox_proposals_count})", outbox_proposals_path %></li>
         <li><%= link_to "Сообщения (#{unread_messages_count})", conversations_path %></li>

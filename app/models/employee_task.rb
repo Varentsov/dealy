@@ -4,5 +4,7 @@ class EmployeeTask < ActiveRecord::Base
   belongs_to :task
   belongs_to :employee
 
-  default_scope { active }
+  #default_scope { active }
+  scope :in_control, -> { where(state: 2) }
+  scope :in_active, -> { where(state: 0) }
 end

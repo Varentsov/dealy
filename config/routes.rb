@@ -41,6 +41,7 @@ Rails.application.routes.draw do
       post 'edit_sort'
       get 'all_tasks'
       get 'clear_sort'
+      get 'in_control'
     end
     member do
       get 'complete'

@@ -1,6 +1,6 @@
 class TasksController < ApplicationController
   before_action :set_task, only: [:show, :edit, :update, :destroy, :complete, :delegate]
-  before_action :allowed_user, except: [:new, :create, :index, :all_tasks, :clear_sort, :edit_sort]
+  before_action :allowed_user, except: [:new, :create, :index, :all_tasks, :clear_sort, :edit_sort, :in_control]
 
   # GET /tasks
   # GET /tasks.json
@@ -13,6 +13,10 @@ class TasksController < ApplicationController
   end
 
   def all_tasks
+    @employees = Employee.where(:user_id => current_user.id).includes(:tasks, :group)
+  end
+
+  def in_control
     @employees = Employee.where(:user_id => current_user.id).includes(:tasks, :group)
   end
 

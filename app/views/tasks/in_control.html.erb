@@ -1,0 +1,41 @@
+    <% @employees.each do |employee| %>
+        <% if employee.in_control_tasks.present? %>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <%= employee.group.present? ? (employee.group.name + ' (' + employee.in_control_tasks.count.to_s + ')') : '' %>
+              </div>
+              <table class="table">
+                <thead>
+                <tr>
+                  <th class="number">#</th>
+                  <th class="challenge">Задача</th>
+                  <th>Description</th>
+                  <th>Deadline</th>
+                  <th>Fire</th>
+                  <th>Finish</th>
+                  <th colspan="4"></th>
+                  <th class="status">Статус</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% employee.in_control_tasks.order(:finished => :asc, :fire => :desc, :deadline => :asc).each do |task| %>
+                <%# Task.joins(:employee_tasks).where(:employee_tasks => { :employee_id => employee.id, :state => 2 }).order(:finished => :asc, :fire => :desc, :deadline => :asc).each do |task| %>
+                    <tr>
+                      <td><%= cycle 1..9999 %></td>
+                      <td><%= link_to task.title, task, class: ((task.over_deadline? ? 'task-over-deadline' : '') + ' ' + (task.finished? ? 'task-finished' : '')) %></td>
+                      <td><%= task.description %></td>
+                      <td><%= task.deadline %></td>
+                      <td><%= task.fire %></td>
+                      <td><%= task.finished %></td>
+                      <td><%= link_to_if !task.finished?, 'Завершить', complete_task_path(task) %></td>
+                      <td><%= link_to 'Show', task %></td>
+                      <td><%= link_to 'Edit', edit_task_path(task) %></td>
+                      <td><%= link_to 'Destroy', task, method: :delete, data: {confirm: 'Are you sure?'} %></td>
+                      <td class="check"><input type="checkbox"></td>
+                    </tr>
+                <% end %>
+                </tbody>
+              </table>
+            </div>
+        <% end %>
+    <% end %>
