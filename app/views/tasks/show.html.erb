@@ -1,4 +1,23 @@
 <p>
+  <strong>Автор:</strong>
+  <%= link_to @author.name, @author %>
+</p>
+
+<p>
+  <strong>Статус:</strong>
+  <%= @employee_task.str_status %>
+  <% if @employee_task.prepare_to_delegate? %>
+      <br/>
+      <% proposal = Proposal.find_by_task_id(@task.id) %>
+      <%= link_to 'Заявка', proposal %>
+  <% elsif @employee_task.delegated? %>
+      <br/>
+      <% user = @task.employees.where(employee_tasks: {role: EmployeeTask.roles[:performer]}).take.user %>
+      Исполнитель <%= link_to user.name, user %>
+  <% end %>
+</p>
+
+<p>
   <strong>Заголовок:</strong>
   <%= @task.title %>
 </p>
@@ -26,15 +45,16 @@
 <%= link_to 'Edit', edit_task_path(@task) %> |
 <%= link_to 'Back', tasks_path %>
 
-
-<div>
-  <%= form_tag delegate_task_path do %>
-      <div class="field">
-        <%= label_tag :employee_id, 'Делегировать задачу пользователю' %><br />
-        <%= select_tag :employee_id, options_from_collection_for_select(current_workspace.employees.where.not(:id => current_employee.id), :id, :user_name), prompt: 'Выбрать исполнителя' %>
-      </div>
-      <div class="actions">
-        <%= submit_tag 'Делегировать' %>
-      </div>
-  <% end %>
-</div>
+<% if @employee_task.active? %>
+    <div>
+      <%= form_tag delegate_task_path do %>
+          <div class="field">
+            <%= label_tag :employee_id, 'Делегировать задачу пользователю' %><br/>
+            <%= select_tag :employee_id, options_from_collection_for_select(current_workspace.employees.where.not(:id => current_employee.id), :id, :user_name), prompt: 'Выбрать исполнителя' %>
+          </div>
+          <div class="actions">
+            <%= submit_tag 'Делегировать' %>
+          </div>
+      <% end %>
+    </div>
+<% end %>

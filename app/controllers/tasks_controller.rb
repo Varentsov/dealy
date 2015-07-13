@@ -5,11 +5,11 @@ class TasksController < ApplicationController
   # GET /tasks
   # GET /tasks.json
   def index
-    @today_tasks_sorted = current_employee.tasks.where.not(:sort_value => nil, :finished => true).order(:sort_value => :asc)
-    @today_tasks_over_deadline = current_employee.tasks.where("finished = ? AND deadline < ?", false, Date.today.beginning_of_day).order(:fire => :desc, :deadline => :asc) - @today_tasks_sorted
-    @today_tasks_normal = current_employee.tasks.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.beginning_of_day, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_sorted
-    @next_tasks = current_employee.tasks.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.end_of_day, (Date.today + 7).end_of_day, Task.planning_states[:to_next]).order(:fire => :desc, :deadline => :asc)- @today_tasks_over_deadline - @today_tasks_sorted - @today_tasks_normal
-    @other_tasks = current_employee.tasks.where(:finished => false).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_normal - @next_tasks - @today_tasks_sorted
+    @today_tasks_sorted = current_employee.active_tasks.where.not(:sort_value => nil, :finished => true).order(:sort_value => :asc)
+    @today_tasks_over_deadline = current_employee.active_tasks.where("finished = ? AND deadline < ?", false, Date.today.beginning_of_day).order(:fire => :desc, :deadline => :asc) - @today_tasks_sorted
+    @today_tasks_normal = current_employee.active_tasks.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.beginning_of_day, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_sorted
+    @next_tasks = current_employee.active_tasks.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.end_of_day, (Date.today + 7).end_of_day, Task.planning_states[:to_next]).order(:fire => :desc, :deadline => :asc)- @today_tasks_over_deadline - @today_tasks_sorted - @today_tasks_normal
+    @other_tasks = current_employee.active_tasks.where(:finished => false).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_normal - @next_tasks - @today_tasks_sorted
   end
 
   def all_tasks
@@ -23,6 +23,9 @@ class TasksController < ApplicationController
   # GET /tasks/1
   # GET /tasks/1.json
   def show
+    employee_id = (current_user.employee_ids & @task.employee_ids).first
+    @employee_task = EmployeeTask.where(task_id: @task.id, employee_id: employee_id).take
+    @author = EmployeeTask.where(task_id: @task.id, role: EmployeeTask.roles[:author]).take.employee.user
   end
 
   # GET /tasks/new
@@ -117,7 +120,7 @@ class TasksController < ApplicationController
   private
 
     def allowed_user
-      if (current_user.employee_ids & (EmployeeTask.unscoped { @task.employee_ids })).empty?
+      if (current_user.employee_ids & @task.employee_ids).empty?
         redirect_to tasks_url, notice: 'Недостаточно прав для просмотра'
       end
     end

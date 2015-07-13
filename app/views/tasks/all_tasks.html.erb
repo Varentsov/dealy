@@ -1,8 +1,8 @@
 <% @employees.each do |employee| %>
-    <% if employee.tasks.present? %>
+    <% if employee.active_tasks.present? %>
         <div class="panel panel-default">
           <div class="panel-heading">
-            <%= employee.group.present? ? (employee.group.name + ' (' + employee.tasks.count.to_s + ')') : '' %>
+            <%= employee.group.present? ? (employee.group.name + ' (' + employee.active_tasks.count.to_s + ')') : '' %>
           </div>
           <table class="table">
             <thead>
@@ -18,7 +18,7 @@
             </tr>
             </thead>
             <tbody>
-            <% employee.tasks.order(:finished => :asc, :fire => :desc, :deadline => :asc).each do |task| %>
+            <% employee.active_tasks.order(:finished => :asc, :fire => :desc, :deadline => :asc).each do |task| %>
                 <tr>
                   <td><%= cycle 1..9999 %></td>
                   <td><%= link_to task.title, task, class: ((task.over_deadline? ? 'task-over-deadline' : '') + ' ' + (task.finished? ? 'task-finished' : '')) %></td>
