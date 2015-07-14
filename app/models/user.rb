@@ -15,6 +15,8 @@ class User < ActiveRecord::Base
   has_many :workspaces
   has_many :my_groups, foreign_key: :account_id, class_name: 'Group'
 
+  before_update :update_my_group_name
+
   def User.new_remember_token
     SecureRandom.urlsafe_base64
   end
@@ -25,6 +27,12 @@ class User < ActiveRecord::Base
 
   def name
     last_name + ' ' + first_name
+  end
+
+  def update_my_group_name
+    if self.last_name_changed? or self.first_name_changed?
+      Group.find_by_account_id(self.id).update_attribute(:name, self.name)
+    end
   end
 
   private

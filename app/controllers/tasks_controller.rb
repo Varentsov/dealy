@@ -113,7 +113,7 @@ class TasksController < ApplicationController
 
   def delegate
     proposal = Proposal.create!(:task_id => @task.id, :supplier_id => current_employee.id, :receiver_id => params[:employee_id])
-    emp_task = current_employee.employee_tasks.where(:task_id => @task.id).take.update_attribute(:state, :delegated)
+    emp_task = current_employee.employee_tasks.where(:task_id => @task.id).take.update_attribute(:state, :prepare_to_delegate)
     redirect_to root_path, notice: "Заявка отправлена"
   end
 

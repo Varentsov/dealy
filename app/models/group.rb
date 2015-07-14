@@ -11,6 +11,8 @@ class Group < ActiveRecord::Base
 
   enum account_state: { default: 0, user: 1 }
 
+  scope :public_groups, -> { default }
+
   def name
     if self.user?
       'Личное пространство'

@@ -1,10 +1,16 @@
-<p>
-  Входящая завявка от пользователя <%= link_to @proposal.supplier.user.name, @proposal.supplier.user %>
-</p>
+<% if current_user.employee_ids.include?(@proposal.supplier_id) %>
+    <p>
+      Исходящая завявка пользователю <%= link_to @proposal.receiver.user.name, @proposal.receiver.user %>
+    </p>
+<% elsif current_user.employee_ids.include?(@proposal.receiver_id) %>
+    <p>
+      Входящая завявка от пользователя <%= link_to @proposal.supplier.user.name, @proposal.supplier.user %>
+    </p>
+<% end %>
 
 <p>
   <strong>Task:</strong>
-  <%= @proposal.task.title %>
+  <%= link_to @proposal.task.title, @proposal.task %>
 </p>
 
 <p>
