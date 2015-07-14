@@ -1,7 +1,7 @@
 class Proposal < ActiveRecord::Base
   belongs_to :task
-  belongs_to :supplier, class_name: Employee
-  belongs_to :receiver, class_name: Employee
+  belongs_to :supplier, foreign_key: 'supplier_id', class_name: Employee
+  belongs_to :receiver, foreign_key: 'receiver_id', class_name: Employee
 
   after_create :create_employee_task
   before_destroy :delete_employee_task
