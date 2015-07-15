@@ -1,8 +1,8 @@
 class Task < ActiveRecord::Base
   enum planning_state: [:to_sometime, :to_next, :to_today]
   validates :title, presence: true
-  has_many :proposals
-  has_many :employee_tasks
+  has_many :proposals, dependent: :destroy
+  has_many :employee_tasks, dependent: :destroy
   has_many :employees, through: :employee_tasks
   #has_many :groups, through: :employees
 

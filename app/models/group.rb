@@ -1,10 +1,11 @@
 class Group < ActiveRecord::Base
   belongs_to :account, foreign_key: :account_id, class_name: User
-  has_many :employees
+  has_many :employees, dependent: :destroy
   has_many :users, through: :employees
   has_ancestry
   after_create :create_employee_for_new_user, if: lambda { |group| group.account_id.present? }
   before_create :add_account_state, if: lambda { |group| group.account_id.present? }
+  #after_destroy :delete_employees
 
 
   validates_presence_of :name
@@ -23,6 +24,10 @@ class Group < ActiveRecord::Base
 
 
   private
+
+    def delete_employees
+      Employee.where(group_id: id).map(&:destroy!)
+    end
 
     def create_employee_for_new_user
       Employee.create!(:group_id => id, :user_id => account_id)

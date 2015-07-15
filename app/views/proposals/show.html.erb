@@ -29,6 +29,9 @@
 </p>
 
 
-
-<%= link_to 'Принять задачу', accept_proposal_path(@proposal) %> |
+<% if current_user.employee_ids.include?(@proposal.supplier_id) %>
+    <%= link_to 'Отменить заявку', @proposal,method: :delete %> |
+<% elsif current_user.employee_ids.include?(@proposal.receiver_id) %>
+    <%= link_to 'Принять задачу', accept_proposal_path(@proposal) %> |
+<% end %>
 <%= link_to 'Назад', proposals_path %>

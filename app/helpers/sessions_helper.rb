@@ -4,6 +4,7 @@ module SessionsHelper
     cookies.permanent[:remember_token] = remember_token
     user.update_attribute(:remember_token, User.encrypt(remember_token))
     self.current_user = user
+    session.delete(:workspace)
   end
 
   def current_user=(user)

@@ -1,7 +1,7 @@
 class Employee < ActiveRecord::Base
   belongs_to :user
   belongs_to :group
-  has_many :employee_tasks
+  has_many :employee_tasks, dependent: :destroy
   has_many :tasks, through: :employee_tasks
   has_many :inbox_proposals, class_name: Proposal, foreign_key: :receiver_id
   has_many :outbox_proposals, class_name: Proposal, foreign_key: :supplier_id
@@ -18,4 +18,10 @@ class Employee < ActiveRecord::Base
   def active_tasks
     tasks.merge(EmployeeTask.in_active)
   end
+
+  private
+
+    def delete_employee_tasks
+      EmployeeTask.where(employee_id: id).map(&:destroy!)
+    end
 end

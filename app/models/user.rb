@@ -10,9 +10,8 @@ class User < ActiveRecord::Base
   has_many :recipients, dependent: :destroy
   has_many :messages, through: :recipients
   has_many :conversations, through: :recipients
-  has_many :employees
+  has_many :employees, dependent: :destroy
   has_many :groups, through: :employees
-  has_many :workspaces
   has_many :my_groups, foreign_key: :account_id, class_name: 'Group'
 
   before_update :update_my_group_name
