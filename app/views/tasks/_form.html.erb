@@ -39,7 +39,21 @@
     <% if (action_name == 'new' || action_name == 'create') && current_workspace.default? %>
         <div class="field">
           <%= label_tag :employee_id, 'Назначить исполнителем' %><br />
-          <%= select_tag :employee_id, options_from_collection_for_select(current_employee.group.employees, :id, :user_name), prompt: 'Выбрать исполнителя' %>
+          <select name="employee_id" id="employee_id">
+            <option value="">Выбрать исполнителя</option>
+            <optgroup label="Пользователи">
+              <% current_workspace.employees.users.where.not(:id => current_employee.id).each do |employee| %>
+                  <option value="<%= employee.id %>"><%= employee.user_name %></option>
+              <% end %>
+            </optgroup>
+            <optgroup label="Группы">
+              <% current_workspace.root.subtree.each do |group| %>
+                  <% group.employees.groups.where.not(group_id: current_workspace.id).each do |employee| %>
+                      <option value="<%= employee.id %>"><%= employee.group.name %></option>
+                  <% end %>
+              <% end %>
+            </optgroup>
+          </select>
         </div>
     <% end %>
   <div class="actions">

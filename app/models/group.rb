@@ -5,7 +5,8 @@ class Group < ActiveRecord::Base
   has_ancestry
   after_create :create_employee_for_new_user, if: lambda { |group| group.account_id.present? }
   before_create :add_account_state, if: lambda { |group| group.account_id.present? }
-  #after_destroy :delete_employees
+  after_create :create_employee_for_new_group
+
 
 
   validates_presence_of :name
@@ -30,7 +31,11 @@ class Group < ActiveRecord::Base
     end
 
     def create_employee_for_new_user
-      Employee.create!(:group_id => id, :user_id => account_id)
+      Employee.create!(:group_id => id, :user_id => account_id, :is_group => true)
+    end
+
+    def create_employee_for_new_group
+      Employee.create!(:group_id => id, :is_group => true)
     end
 
     def add_account_state

@@ -17,9 +17,12 @@
             <% employee.outbox_proposals.includes(:task).each do |proposal| %>
                 <tr>
                   <td><%= link_to proposal.task.title, proposal %></td>
-                  <td><%= link_to proposal.receiver.user_name, proposal.receiver.user %></td>
+                  <% if proposal.receiver.is_group? %>
+                      <td><%= link_to proposal.receiver.group.name, proposal.receiver.group %></td>
+                  <% else %>
+                      <td><%= link_to proposal.receiver.user_name, proposal.receiver.user %></td>
+                  <% end %>
                   <td><%= link_to 'Show', proposal %></td>
-                  <td><%= link_to 'Edit', edit_proposal_path(proposal) %></td>
                   <td><%= link_to 'Destroy', proposal, method: :delete, data: {confirm: 'Are you sure?'} %></td>
                 </tr>
             <% end %>

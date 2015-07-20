@@ -6,6 +6,9 @@ class Employee < ActiveRecord::Base
   has_many :inbox_proposals, class_name: Proposal, foreign_key: :receiver_id
   has_many :outbox_proposals, class_name: Proposal, foreign_key: :supplier_id
 
+  scope :users, -> { where(is_group: false) }
+  scope :groups, -> { where(is_group: true) }
+
 
   def user_name
     user.name if user.present?

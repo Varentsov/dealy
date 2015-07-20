@@ -50,7 +50,23 @@
       <%= form_tag delegate_task_path do %>
           <div class="field">
             <%= label_tag :employee_id, 'Делегировать задачу пользователю' %><br/>
-            <%= select_tag :employee_id, options_from_collection_for_select(current_workspace.employees.where.not(:id => current_employee.id), :id, :user_name), prompt: 'Выбрать исполнителя' %>
+
+            <select name="employee_id" id="employee_id">
+              <option value="">Выбрать исполнителя</option>
+              <optgroup label="Пользователи">
+                <% current_workspace.employees.users.where.not(:id => current_employee.id).each do |employee| %>
+                    <option value="<%= employee.id %>"><%= employee.user_name %></option>
+                <% end %>
+              </optgroup>
+              <optgroup label="Группы">
+                <% current_workspace.root.subtree.each do |group| %>
+                    <% group.employees.groups.where.not(group_id: current_workspace.id).each do |employee| %>
+                        <option value="<%= employee.id %>"><%= employee.group.name %></option>
+                    <% end %>
+                <% end %>
+              </optgroup>
+            </select>
+
           </div>
           <div class="actions">
             <%= submit_tag 'Делегировать' %>

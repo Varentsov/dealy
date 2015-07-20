@@ -112,6 +112,10 @@ class TasksController < ApplicationController
   end
 
   def delegate
+    if params[:employee_id].blank?
+      redirect_to_back_or_default notice: "Нужно выбрать кого-то"
+      return
+    end
     proposal = Proposal.create!(:task_id => @task.id, :supplier_id => current_employee.id, :receiver_id => params[:employee_id])
     emp_task = current_employee.employee_tasks.where(:task_id => @task.id).take.update_attribute(:state, :prepare_to_delegate)
     redirect_to root_path, notice: "Заявка отправлена"

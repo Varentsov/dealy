@@ -1,7 +1,13 @@
 <% if current_user.employee_ids.include?(@proposal.supplier_id) %>
-    <p>
-      Исходящая завявка пользователю <%= link_to @proposal.receiver.user.name, @proposal.receiver.user %>
-    </p>
+    <% if @proposal.receiver.is_group? %>
+        <p>
+          Исходящая завявка группе <%= link_to @proposal.receiver.group.name, @proposal.receiver.group %>
+        </p>
+    <% else %>
+        <p>
+          Исходящая завявка пользователю <%= link_to @proposal.receiver.user.name, @proposal.receiver.user %>
+        </p>
+    <% end %>
 <% elsif current_user.employee_ids.include?(@proposal.receiver_id) %>
     <p>
       Входящая завявка от пользователя <%= link_to @proposal.supplier.user.name, @proposal.supplier.user %>
