@@ -1,5 +1,8 @@
 Сотрудники:<br />
 <% group.users.each do |user| %>
-    <%= link_to user.name, user %><br />
+    <%= link_to user.name, user %><% if group.employees.where(user_id: user.id).take.roles.present? %>,
+        <%= group.employees.where(user_id: user.id).take.roles.map(&:name) %>
+    <% end %>
+    <br />
 <% end %>
 <br />

@@ -1,0 +1,26 @@
+<h1>Listing Roles</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @roles.each do |role| %>
+      <tr>
+        <td><%= role.name %></td>
+        <td><%= link_to 'Show', group_role_path(role.group_id, role) %></td>
+        <td><%= link_to 'Edit', edit_group_role_path(role.group_id, role) %></td>
+        <td><%= link_to 'Destroy', group_role_path(role.group_id, role), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Role', new_group_role_path %> |
+<%= link_to 'Back to group', group_path(@group) %>

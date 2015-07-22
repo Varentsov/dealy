@@ -2,10 +2,12 @@ class Group < ActiveRecord::Base
   belongs_to :account, foreign_key: :account_id, class_name: User
   has_many :employees, dependent: :destroy
   has_many :users, through: :employees
+  has_many :roles, dependent: :destroy
   has_ancestry
   after_create :create_employee_for_new_user, if: lambda { |group| group.account_id.present? }
   before_create :add_account_state, if: lambda { |group| group.account_id.present? }
   after_create :create_employee_for_new_group
+  after_create :add_default_roles
 
 
 
@@ -40,5 +42,10 @@ class Group < ActiveRecord::Base
 
     def add_account_state
       self.account_state = Group.account_states[:user]
+    end
+
+    def add_default_roles
+      Role.create!(name: 'Администратор', group_id: id)
+      Role.create!(name: 'Приемщик заявок', group_id: id)
     end
 end

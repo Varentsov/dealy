@@ -19,8 +19,18 @@
     </p>
 <% end %>
 
+<% if @group.default? %>
+    <p>
+        <% @group.roles.each do |role| %>
+            <%= role.name %><br />
+        <% end %>
+        <%= link_to 'Изменить роли', group_roles_path(@group) %>
+    </p>
+<% end %>
+
 <h3>Связанные группы:</h3>
 <%= nested_groups @children.arrange(:order => :created_at) %>
+
 
 <%= link_to 'Edit employees', edit_users_group_path(@group) %> |
 <%= link_to 'Edit', edit_group_path(@group) %> |

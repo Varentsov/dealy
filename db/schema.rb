@@ -11,13 +11,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150715142743) do
+ActiveRecord::Schema.define(version: 20150721115212) do
 
   create_table "conversations", force: :cascade do |t|
     t.string   "subject",    default: ""
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
   end
+
+  create_table "employee_roles", force: :cascade do |t|
+    t.integer "employee_id"
+    t.integer "role_id"
+  end
+
+  add_index "employee_roles", ["employee_id"], name: "index_employee_roles_on_employee_id"
+  add_index "employee_roles", ["role_id"], name: "index_employee_roles_on_role_id"
 
   create_table "employee_tasks", force: :cascade do |t|
     t.integer  "employee_id"
@@ -89,6 +97,13 @@ ActiveRecord::Schema.define(version: 20150715142743) do
   add_index "recipients", ["conversation_id"], name: "index_recipients_on_conversation_id"
   add_index "recipients", ["message_id"], name: "index_recipients_on_message_id"
   add_index "recipients", ["user_id"], name: "index_recipients_on_user_id"
+
+  create_table "roles", force: :cascade do |t|
+    t.text     "name"
+    t.integer  "group_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "tasks", force: :cascade do |t|
     t.string   "title"

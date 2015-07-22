@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
-  resources :proposals do
+
+  resources :proposals, except: [:edit, :update] do
     member do
       get 'accept'
     end
@@ -20,6 +21,7 @@ Rails.application.routes.draw do
     collection do
       post    'set_workspace'
     end
+    resources :roles
   end
 
   resources :conversations do
