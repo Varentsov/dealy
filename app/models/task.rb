@@ -17,7 +17,13 @@ class Task < ActiveRecord::Base
   end
 
   def prepare_to_delegate(from_employee_id, to_employee_id)
-    proposal = Proposal.create!(:task_id => id, :supplier_id => from_employee_id, :receiver_id => to_employee_id)
-    emp_task = Employee.find(from_employee_id).employee_tasks.where(:task_id => id).take.update_attribute(:state, :prepare_to_delegate)
+    to_employee = Employee.find(to_employee_id)
+    if to_employee.is_group?
+      proposal = Proposal.create!(:task_id => id, :supplier_id => from_employee_id, :receiver_id => to_employee.group.roles.find_by_name('Приемщик заявок').employees.take.id)
+      emp_task = Employee.find(from_employee_id).employee_tasks.where(:task_id => id).take.update_attribute(:state, :prepare_to_delegate)
+    else
+      proposal = Proposal.create!(:task_id => id, :supplier_id => from_employee_id, :receiver_id => to_employee_id)
+      emp_task = Employee.find(from_employee_id).employee_tasks.where(:task_id => id).take.update_attribute(:state, :prepare_to_delegate)
+    end
   end
 end

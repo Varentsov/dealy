@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150721115212) do
+ActiveRecord::Schema.define(version: 20150723115033) do
 
   create_table "conversations", force: :cascade do |t|
     t.string   "subject",    default: ""
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 20150721115212) do
     t.datetime "updated_at",              null: false
     t.integer  "state",       default: 0
     t.integer  "role",        default: 0
+    t.integer  "parent_id"
   end
 
   add_index "employee_tasks", ["employee_id"], name: "index_employee_tasks_on_employee_id"

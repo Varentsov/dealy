@@ -9,9 +9,15 @@
         </p>
     <% end %>
 <% elsif current_user.employee_ids.include?(@proposal.receiver_id) %>
-    <p>
-      Входящая завявка от пользователя <%= link_to @proposal.supplier.user.name, @proposal.supplier.user %>
-    </p>
+    <% if @proposal.supplier.is_group? %>
+        <p>
+          Входящая завявка от группы <%= link_to @proposal.supplier.group.name, @proposal.supplier.group %>
+        </p>
+    <% else %>
+        <p>
+          Входящая завявка от пользователя <%= link_to @proposal.supplier.user.name, @proposal.supplier.user %>
+        </p>
+    <% end %>
 <% end %>
 
 <p>

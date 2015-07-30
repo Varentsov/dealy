@@ -41,6 +41,7 @@ class ProposalsController < ApplicationController
   # DELETE /proposals/1
   # DELETE /proposals/1.json
   def destroy
+    EmployeeTask.where(:employee_id => @proposal.supplier_id, :task_id => @proposal.task_id).take.update_attribute(:state, :active)
     @proposal.destroy
     respond_to do |format|
       format.html { redirect_to_back_or_default notice: 'Proposal was successfully destroyed.' }
