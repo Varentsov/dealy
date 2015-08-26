@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150723115033) do
+ActiveRecord::Schema.define(version: 20150826094747) do
 
   create_table "conversations", force: :cascade do |t|
     t.string   "subject",    default: ""
@@ -74,8 +74,9 @@ ActiveRecord::Schema.define(version: 20150723115033) do
     t.integer  "task_id"
     t.integer  "supplier_id"
     t.integer  "receiver_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.boolean  "to_group",    default: false
   end
 
   add_index "proposals", ["receiver_id"], name: "index_proposals_on_receiver_id"

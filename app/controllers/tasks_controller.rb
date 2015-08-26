@@ -82,11 +82,13 @@ class TasksController < ApplicationController
   end
 
   def complete
-    if @task.update(:finished => true, :finish_time => DateTime.now)
-      redirect_to :back, notice: "Обновлено"
-    else
-      redirect_to :back, notice: "Ошибка записи"
+    @task.transaction do
+      @task.update!(:finished => true, :finish_time => DateTime.now)
+      if EmployeeTask.where(task_id: @task.id, employee_id: (current_user.employee_ids & @task.employee_ids)).take.role != EmployeeTask.roles[:author]
+        EmployeeTask.where(task_id: @task.id, role: EmployeeTask.roles[:author]).take.update!(state: :active)
+      end
     end
+    redirect_to :back, notice: 'Задача завершена'
   end
 
   def edit_sort

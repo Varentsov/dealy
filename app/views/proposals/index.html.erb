@@ -17,11 +17,7 @@
             <% employee.inbox_proposals.includes(:task, :supplier).each do |proposal| %>
                 <tr>
                   <td><%= link_to proposal.task.title, proposal %></td>
-                  <% if proposal.supplier.is_group? %>
-                      <td><%= link_to proposal.supplier.group.name, proposal.supplier.group %></td>
-                  <% else %>
-                      <td><%= link_to proposal.supplier.user_name, proposal.supplier.user %></td>
-                  <% end %>
+                  <td><%= link_to proposal.supplier.user_name, proposal.supplier.user %></td>
                   <td><%= link_to 'Show', proposal %></td>
                   <td><%= link_to 'Destroy', proposal, method: :delete, data: {confirm: 'Are you sure?'} %></td>
                 </tr>

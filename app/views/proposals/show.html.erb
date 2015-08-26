@@ -1,5 +1,5 @@
 <% if current_user.employee_ids.include?(@proposal.supplier_id) %>
-    <% if @proposal.receiver.is_group? %>
+    <% if @proposal.to_group? %>
         <p>
           Исходящая завявка группе <%= link_to @proposal.receiver.group.name, @proposal.receiver.group %>
         </p>

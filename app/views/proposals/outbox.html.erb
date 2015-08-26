@@ -17,7 +17,7 @@
             <% employee.outbox_proposals.includes(:task).each do |proposal| %>
                 <tr>
                   <td><%= link_to proposal.task.title, proposal %></td>
-                  <% if proposal.receiver.is_group? %>
+                  <% if proposal.to_group? %>
                       <td><%= link_to proposal.receiver.group.name, proposal.receiver.group %></td>
                   <% else %>
                       <td><%= link_to proposal.receiver.user_name, proposal.receiver.user %></td>
