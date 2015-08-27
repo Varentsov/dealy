@@ -1,5 +1,5 @@
 class EmployeeTask < ActiveRecord::Base
-  enum state: [:active, :delegated, :prepare_to_delegate]
+  enum state: [:active, :delegated, :prepare_to_delegate, :confirmation]
   enum role: {author: 0, performer: 1, auditor: 2, reviewer: 3, group_task: 4}
   belongs_to :task
   belongs_to :employee

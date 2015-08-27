@@ -85,7 +85,7 @@ class TasksController < ApplicationController
     @task.transaction do
       @task.update!(:finished => true, :finish_time => DateTime.now)
       if EmployeeTask.where(task_id: @task.id, employee_id: (current_user.employee_ids & @task.employee_ids)).take.role != EmployeeTask.roles[:author]
-        EmployeeTask.where(task_id: @task.id, role: EmployeeTask.roles[:author]).take.update!(state: :active)
+        EmployeeTask.where(task_id: @task.id, role: EmployeeTask.roles[:author]).take.update!(state: :confirmation)
       end
     end
     redirect_to :back, notice: 'Задача завершена'

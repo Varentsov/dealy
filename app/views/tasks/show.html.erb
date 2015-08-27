@@ -12,8 +12,12 @@
       <%= link_to 'Заявка', proposal %>
   <% elsif @employee_task.delegated? %>
       <br/>
-      <% user = @task.employees.where(employee_tasks: {role: EmployeeTask.roles[:performer]}).take.user %>
-      Исполнитель <%= link_to user.name, user %>
+      <% employee = @task.employees.where(employee_tasks: {role: EmployeeTask.roles[:performer]}).take %>
+      <% if employee.group_id == @employee_task.employee.group_id %>
+          Исполнитель <%= link_to employee.user.name, employee.user %>
+      <% else %>
+          Исполнитель <%= link_to employee.group.name, employee.group %>
+      <% end %>
   <% end %>
 </p>
 

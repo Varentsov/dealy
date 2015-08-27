@@ -53,7 +53,7 @@ class ProposalsController < ApplicationController
     @task = @proposal.task
     @task.delegate(@proposal.supplier_id, @proposal.receiver_id)
     @proposal.destroy
-    redirect_to tasks_path, notice: "Заявка принята, теперь задача есть в вашем списке"
+    redirect_to tasks_path, notice: "Заявка принята, теперь задача появится в списке #{@proposal.receiver.group.name}"
   end
 
   private

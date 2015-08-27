@@ -7,7 +7,12 @@ class Task < ActiveRecord::Base
   #has_many :groups, through: :employees
 
   def delegate(from_employee_id, to_employee_id)
-    EmployeeTask.where(:employee_id => from_employee_id, :task_id => id).take.update_attributes(:state => :delegated)
+    from_em_task = EmployeeTask.where(:employee_id => from_employee_id, :task_id => id).take
+    if from_em_task.author?
+      from_em_task.update_attributes(:state => :delegated)
+    else
+      from_em_task.update_attributes(:state => :delegated, :role => :reviewer)
+    end
     EmployeeTask.create!(:task_id => id, :employee_id => to_employee_id, :state => :active, :role => :performer)
   end
 
