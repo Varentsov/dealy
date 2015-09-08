@@ -39,7 +39,7 @@
             <tr id="<%= task.id %>">
               <td><%= cycle 1..9999 %></td>
               <td><%= link_to task.title, task, class: (task.over_deadline? ? 'task-over-deadline' : '')%></td>
-              <td class="check"><%= link_to 'Завершить', complete_task_path(task) %></td>
+              <td class="check"><%= link_to 'Завершить', complete_task_path(task), method: :patch %></td>
               <td class="check"><input type="checkbox"></td>
             </tr>
         <% end %>
@@ -47,7 +47,7 @@
             <tr id="<%= task.id %>">
               <td><%= cycle 1..9999 %></td>
               <td><%= link_to task.title, task, class: (task.over_deadline? ? 'task-over-deadline' : '')%></td>
-              <td class="check"><%= link_to 'Завершить', complete_task_path(task) %></td>
+              <td class="check"><%= link_to 'Завершить', complete_task_path(task), method: :patch %></td>
               <td class="check"><input type="checkbox"></td>
             </tr>
         <% end %>
@@ -55,7 +55,7 @@
             <tr id="<%= task.id %>">
               <td><%= cycle 1..9999 %></td>
               <td><%= link_to task.title, task, class: (task.over_deadline? ? 'task-over-deadline' : '')%></td>
-              <td class="check"><%= link_to 'Завершить', complete_task_path(task) %></td>
+              <td class="check"><%= link_to 'Завершить', complete_task_path(task), method: :patch %></td>
               <td class="check"><input type="checkbox"></td>
             </tr>
         <% end %>
@@ -84,7 +84,7 @@
             <tr>
               <td><%= cycle 1..9999 %></td>
               <td><%= link_to task.title, task, class: (task.over_deadline? ? 'task-over-deadline' : '')%></td>
-              <td class="check"><%= link_to 'Завершить', complete_task_path(task) %></td>
+              <td class="check"><%= link_to 'Завершить', complete_task_path(task), method: :patch %></td>
               <td class="check"><input type="checkbox"></td>
             </tr>
         <% end %>
@@ -143,7 +143,7 @@
             <tr>
               <td><%= cycle 1..9999 %></td>
               <td><%= link_to task.title, task, class: (task.over_deadline? ? 'task-over-deadline' : '')%></td>
-              <td class="check"><%= link_to 'Завершить', complete_task_path(task) %></td>
+              <td class="check"><%= link_to 'Завершить', complete_task_path(task), method: :patch %></td>
               <td class="check"><input type="checkbox"></td>
             </tr>
         <% end %>

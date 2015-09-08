@@ -46,7 +46,8 @@ Rails.application.routes.draw do
       get 'in_control'
     end
     member do
-      get 'complete'
+      patch 'complete'
+      patch 'restore'
       post 'delegate'
     end
   end

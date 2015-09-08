@@ -47,7 +47,12 @@
 </p>
 
 <%= link_to 'Edit', edit_task_path(@task) %> |
-<%= link_to 'Back', tasks_path %>
+<%= link_to 'Back', tasks_path %> |
+<% if @employee_task.completed? %>
+    <%= link_to 'Восстановить', restore_task_path(@task), method: :patch %>
+<% else %>
+    <%= link_to 'Завершить', complete_task_path(@task), method: :patch %>
+<% end %>
 
 <% if @employee_task.active? %>
     <div>
