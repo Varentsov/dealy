@@ -1,12 +1,11 @@
 class EmployeeTask < ActiveRecord::Base
-  enum state: [:active, :delegated, :prepare_to_delegate, :confirmation, :completed]
+  enum state: [:active, :delegated, :prepare_to_delegate, :confirmation]
   enum role: {author: 0, performer: 1, auditor: 2, reviewer: 3, group_task: 4}
   belongs_to :task
   belongs_to :employee
 
   scope :in_control, -> { where(state: [EmployeeTask.states[:delegated]]) }
   scope :in_active, -> { where(state: [EmployeeTask.states[:active], EmployeeTask.states[:confirmation]]) }
-  scope :active_and_finished_tasks, -> { where(state: [EmployeeTask.states[:active], EmployeeTask.states[:confirmation], EmployeeTask.states[:completed]]) }
 
   def str_status
     case state
@@ -17,9 +16,7 @@ class EmployeeTask < ActiveRecord::Base
       when 'prepare_to_delegate'
         "Ожидание решения"
       when 'confirmation'
-        "Подтверждение завершения"
-      when 'completed'
-        "Завершено"
+        "Ожидание подтверждения"
       else
         "Ошибка"
     end

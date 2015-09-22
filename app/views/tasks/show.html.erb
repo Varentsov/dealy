@@ -48,13 +48,13 @@
 
 <%= link_to 'Edit', edit_task_path(@task) %> |
 <%= link_to 'Back', tasks_path %> |
-<% if @employee_task.completed? %>
+<% if @task.finished? %>
     <%= link_to 'Восстановить', restore_task_path(@task), method: :patch %>
 <% else %>
     <%= link_to 'Завершить', complete_task_path(@task), method: :patch %>
 <% end %>
 
-<% if @employee_task.active? %>
+<% if @employee_task.active? && !@task.finished? %>
     <div>
       <%= form_tag delegate_task_path do %>
           <div class="field">

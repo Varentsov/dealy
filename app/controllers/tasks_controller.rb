@@ -5,11 +5,11 @@ class TasksController < ApplicationController
   # GET /tasks
   # GET /tasks.json
   def index
-    @today_tasks_sorted = current_employee.active_tasks.where.not(:sort_value => nil).order(:sort_value => :asc)
-    @today_tasks_over_deadline = current_employee.active_tasks.where("deadline < ?", Date.today.beginning_of_day).order(:fire => :desc, :deadline => :asc) - @today_tasks_sorted
-    @today_tasks_normal = current_employee.active_tasks.where("(deadline BETWEEN ? AND ? OR planning_state = ?)", Date.today.beginning_of_day, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_sorted
-    @next_tasks = current_employee.active_tasks.where("(deadline BETWEEN ? AND ? OR planning_state = ?)", Date.today.end_of_day, (Date.today + 7).end_of_day, Task.planning_states[:to_next]).order(:fire => :desc, :deadline => :asc)- @today_tasks_over_deadline - @today_tasks_sorted - @today_tasks_normal
-    @other_tasks = current_employee.active_tasks.order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_normal - @next_tasks - @today_tasks_sorted
+    @today_tasks_sorted = current_employee.active_tasks.where.not(:sort_value => nil, :finished => true).order(:sort_value => :asc)
+    @today_tasks_over_deadline = current_employee.active_tasks.where("finished = ? AND deadline < ?", false, Date.today.beginning_of_day).order(:fire => :desc, :deadline => :asc) - @today_tasks_sorted
+    @today_tasks_normal = current_employee.active_tasks.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.beginning_of_day, Date.today.end_of_day, Task.planning_states[:to_today]).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_sorted
+    @next_tasks = current_employee.active_tasks.where("finished = ? AND (deadline BETWEEN ? AND ? OR planning_state = ?)", false, Date.today.end_of_day, (Date.today + 7).end_of_day, Task.planning_states[:to_next]).order(:fire => :desc, :deadline => :asc)- @today_tasks_over_deadline - @today_tasks_sorted - @today_tasks_normal
+    @other_tasks = current_employee.active_tasks.where(:finished => false).order(:fire => :desc, :deadline => :asc) - @today_tasks_over_deadline - @today_tasks_normal - @next_tasks - @today_tasks_sorted
   end
 
   def all_tasks
@@ -83,12 +83,10 @@ class TasksController < ApplicationController
 
   def complete
     @task.transaction do
-      my_emp_task = EmployeeTask.where(task_id: @task.id, employee_id: (current_user.employee_ids & @task.employee_ids)).take
-      if my_emp_task.author?
-        my_emp_task.update!(state: :completed)
-      else
-        my_emp_task.update!(state: :completed)
-        EmployeeTask.where(task_id: @task.id).where.not(id: my_emp_task.id).update_all(state: :confirmation)
+      @task.update!(:finished => true, :finish_time => DateTime.now)
+      my_empl_task = EmployeeTask.where(task_id: @task.id, employee_id: (current_user.employee_ids & @task.employee_ids)).take
+      if not my_empl_task.author?
+        EmployeeTask.where(task_id: @task.id, role: EmployeeTask.roles[:author]).take.update!(state: :confirmation)
       end
     end
     redirect_to :back, notice: 'Задача завершена'
@@ -96,9 +94,15 @@ class TasksController < ApplicationController
 
   def restore
     @task.transaction do
+      @task.update!(:finished => false, :finish_time => nil)
       my_emp_task = EmployeeTask.where(task_id: @task.id, employee_id: (current_user.employee_ids & @task.employee_ids)).take
       if my_emp_task.author?
-        my_emp_task.update!(state: :active)
+        performer = EmployeeTask.where(task_id: @task.id, role: EmployeeTask.states[:active])
+        if performer.present? && performer.take.id != my_emp_task.id
+          my_emp_task.update!(state: :delegated)
+        else
+          my_emp_task.update!(state: :active)
+        end
       else
         EmployeeTask.where(task_id: @task.id, role: EmployeeTask.roles[:author]).take.update!(state: :confirmation)
       end

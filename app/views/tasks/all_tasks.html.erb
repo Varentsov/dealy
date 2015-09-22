@@ -1,8 +1,8 @@
 <% @employees.each do |employee| %>
-    <% if employee.active_tasks_with_finished.present? %>
+    <% if employee.active_tasks.present? %>
         <div class="panel panel-default">
           <div class="panel-heading">
-            <%= employee.group.present? ? (employee.group.name + ' (' + employee.active_tasks_with_finished.count.to_s + ')') : '' %>
+            <%= employee.group.present? ? (employee.group.name + ' (' + employee.active_tasks.count.to_s + ')') : '' %>
           </div>
           <table class="table">
             <thead>
@@ -18,17 +18,16 @@
             </tr>
             </thead>
             <tbody>
-            <% employee.active_tasks_with_finished.order(:finished => :asc, :fire => :desc, :deadline => :asc).each do |task| %>
-                <% employee_task = EmployeeTask.where(employee_id: (current_user.employee_ids & task.employee_ids)[0], task_id: task.id).take %>
+            <% employee.active_tasks.order(:finished => :asc, :fire => :desc, :deadline => :asc).each do |task| %>
                 <tr>
                   <td><%= cycle 1..9999 %></td>
-                  <td><%= link_to task.title, task, class: ((task.over_deadline? ? 'task-over-deadline' : '') + ' ' + (employee_task.completed? ? 'task-finished' : '')) %></td>
+                  <td><%= link_to task.title, task, class: ((task.over_deadline? ? 'task-over-deadline' : '') + ' ' + (task.finished? ? 'task-finished' : '')) %></td>
                   <td><%= task.description %></td>
                   <td><%= task.deadline %></td>
                   <td><%= task.fire %></td>
-                  <td><%= employee_task.completed? %></td>
+                  <td><%= task.finished? %></td>
                   <td>
-                    <% if employee_task.completed? %>
+                    <% if task.finished? %>
                         <%= link_to 'Восстановить', restore_task_path(task), method: :patch %>
                     <% else %>
                         <%= link_to 'Завершить', complete_task_path(task), method: :patch %>

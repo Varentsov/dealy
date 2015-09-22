@@ -26,10 +26,6 @@ class Employee < ActiveRecord::Base
     tasks.merge(EmployeeTask.in_active)
   end
 
-  def active_tasks_with_finished
-    tasks.merge(EmployeeTask.active_and_finished_tasks)
-  end
-
   private
 
     def add_roles_to_first_user
