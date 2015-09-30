@@ -44,7 +44,11 @@ class TasksController < ApplicationController
 
     respond_to do |format|
       if @task.save
-        EmployeeTask.create!(:employee_id => current_employee.id, :task_id => @task.id)
+        if params[:parent].present? && allowed_empl_task(params[:parent])
+          EmployeeTask.create!(:employee_id => current_employee.id, :task_id => @task.id, :parent_id => params[:parent])
+        else
+          EmployeeTask.create!(:employee_id => current_employee.id, :task_id => @task.id)
+        end
         if params[:employee_id].present? && params[:employee_id].to_i != current_employee.id
           @task.prepare_to_delegate(current_employee.id, params[:employee_id].to_i)
         end
@@ -146,6 +150,15 @@ class TasksController < ApplicationController
     def allowed_user
       if (current_user.employee_ids & @task.employee_ids).empty?
         redirect_to tasks_url, notice: 'Недостаточно прав для просмотра'
+      end
+    end
+
+    def allowed_empl_task(empl_task)
+      empl_task = EmployeeTask.find(empl_task.to_i)
+      if current_user.employee_ids.include?(empl_task.employee_id)
+        true
+      else
+        false
       end
     end
 

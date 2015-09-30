@@ -1,3 +1,11 @@
+<% if @employee_task.parent_id.present? %>
+    <% parent_empl_task = EmployeeTask.find(@employee_task.parent_id) %>
+    <p>
+      <h3>Родительская задача</h3>
+      <%= link_to parent_empl_task.task.title, parent_empl_task.task %>
+    </p>
+<% end %>
+
 <p>
   <strong>Автор:</strong>
   <%= link_to @author.name, @author %>
@@ -75,11 +83,14 @@
                 <% end %>
               </optgroup>
             </select>
-
           </div>
           <div class="actions">
             <%= submit_tag 'Делегировать' %>
           </div>
       <% end %>
+    </div>
+
+    <div class="actions">
+      <%= link_to 'Добавить подзадачу', new_task_path(parent: @employee_task), method: :get, class: '' %>
     </div>
 <% end %>

@@ -56,7 +56,10 @@
           </select>
         </div>
     <% end %>
-  <div class="actions">
+    <% if params[:parent].present? %>
+        <%= hidden_field_tag :parent, params[:parent] %>
+    <% end %>
+    <div class="actions">
     <%= f.submit %>
   </div>
 <% end %>
