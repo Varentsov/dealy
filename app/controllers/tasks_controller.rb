@@ -26,6 +26,7 @@ class TasksController < ApplicationController
     employee_id = (current_user.employee_ids & @task.employee_ids).first
     @employee_task = EmployeeTask.where(task_id: @task.id, employee_id: employee_id).take
     @author = EmployeeTask.where(task_id: @task.id, role: EmployeeTask.roles[:author]).take.employee.user
+    @sub_tasks = EmployeeTask.where(:parent_id => @employee_task.id)
   end
 
   # GET /tasks/new

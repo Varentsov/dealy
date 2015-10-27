@@ -94,3 +94,10 @@
       <%= link_to 'Добавить подзадачу', new_task_path(parent: @employee_task), method: :get, class: '' %>
     </div>
 <% end %>
+
+<% if @sub_tasks.present? %>
+    <h3>Подзадачи</h3>
+    <% @sub_tasks.each do |sub_task| %>
+        <%= link_to sub_task.task.title, sub_task.task %> <%= sub_task.task.finished? ? 'Завершена' : nil %><br />
+    <% end %>
+<% end %>
