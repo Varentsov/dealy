@@ -46,6 +46,7 @@ class ConversationsController < ApplicationController
       conversation_params[:user_ids].each do |user|
         if user.present?
           Recipient.create!(:message_id => @message.id, :user_id => user.to_i, :author_id => current_user.id, :conversation_id => @conversation.id)
+          Notification.create!(:employee_id => User.find(user.to_i).employees.first.id, text: "<a href=\"#{user_path(current_user)}\">#{current_user.name}</a> отправил вам личное <a href=\"#{conversation_path(@conversation)}\">сообщение</a>")
         end
       end
     end
@@ -93,6 +94,7 @@ class ConversationsController < ApplicationController
       @conversation.users.uniq.each do |user|
         if user.id != current_user.id
           Recipient.create!(:message_id => message.id, :user_id => user.id, :author_id => current_user.id, :conversation_id => @conversation.id)
+          Notification.create!(:employee_id => user.employees.first.id, text: "<a href=\"#{user_path(current_user)}\">#{current_user.name}</a> отправил вам личное <a href=\"#{conversation_path(@conversation)}\">сообщение</a>")
         else
           Recipient.create!(:message_id => message.id, :user_id => user.id, :author_id => current_user.id, :conversation_id => @conversation.id, :read => true)
         end

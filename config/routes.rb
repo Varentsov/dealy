@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
 
-  resources :proposals, except: [:edit, :update] do
+  resources :proposals, except: [:edit, :update, :new, :create] do
     member do
       get 'accept'
     end
@@ -29,6 +29,8 @@ Rails.application.routes.draw do
       post 'create_message'
     end
   end
+
+  resources :notifications, only: [:index, :show, :destroy]
 
   resources :sessions, only: [:new, :create, :destroy]
   match '/sign_in', to: 'sessions#new', via: :get

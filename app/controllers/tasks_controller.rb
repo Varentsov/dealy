@@ -89,9 +89,13 @@ class TasksController < ApplicationController
   def complete
     @task.transaction do
       @task.update!(:finished => true, :finish_time => DateTime.now)
-      my_empl_task = EmployeeTask.where(task_id: @task.id, employee_id: (current_user.employee_ids & @task.employee_ids)).take
+      my_empl_id = current_user.employee_ids & @task.employee_ids
+      my_empl_task = EmployeeTask.where(task_id: @task.id, employee_id: my_empl_id).take
       if not my_empl_task.author?
-        EmployeeTask.where(task_id: @task.id, role: EmployeeTask.roles[:author]).take.update!(state: :confirmation)
+        author_empl_task = EmployeeTask.where(task_id: @task.id, role: EmployeeTask.roles[:author]).take
+        author_empl_task.update!(state: :confirmation)
+        author = author_empl_task.employee
+        Notification.create!(employee: author, text: "<a href=\"#{user_path(current_user)}\">#{current_user.name}</a> завершил задачу <a href=\"#{task_path(@task)}\">#{@task.title}</a>")
       end
     end
     redirect_to :back, notice: 'Задача завершена'

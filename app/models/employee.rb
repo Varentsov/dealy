@@ -7,6 +7,7 @@ class Employee < ActiveRecord::Base
   has_many :outbox_proposals, class_name: Proposal, foreign_key: :supplier_id
   has_many :employee_roles, dependent: :destroy
   has_many :roles, through: :employee_roles
+  has_many :notifications, dependent: :destroy
 
   after_create :add_roles_to_first_user
 

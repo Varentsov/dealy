@@ -1,6 +1,6 @@
 class ProposalsController < ApplicationController
   before_action :set_proposal, only: [:show, :destroy, :accept]
-  before_action :allowed_user, except: [:index, :outbox, :new]
+  before_action :allowed_user, except: [:index, :outbox]
 
   # GET /proposals
   # GET /proposals.json
@@ -17,32 +17,12 @@ class ProposalsController < ApplicationController
   def show
   end
 
-  # GET /proposals/new
-  def new
-    @proposal = Proposal.new
-  end
-
-  # POST /proposals
-  # POST /proposals.json
-  def create
-    @proposal = Proposal.new(proposal_params)
-
-    respond_to do |format|
-      if @proposal.save
-        format.html { redirect_to @proposal, notice: 'Proposal was successfully created.' }
-        format.json { render :show, status: :created, location: @proposal }
-      else
-        format.html { render :new }
-        format.json { render json: @proposal.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
   # DELETE /proposals/1
   # DELETE /proposals/1.json
   def destroy
     EmployeeTask.where(:employee_id => @proposal.supplier_id, :task_id => @proposal.task_id).take.update_attribute(:state, :active)
     @proposal.destroy
+    Notification.create!(:employee_id => @proposal.supplier_id, text: "<a href=\"#{user_path(current_user)}\">#{current_user.name}</a> не принял задачу <a href=\"#{task_path(@proposal.task)}\">#{@proposal.task.title}</a>")
     respond_to do |format|
       format.html { redirect_to_back_or_default notice: 'Proposal was successfully destroyed.' }
       format.json { head :no_content }
@@ -52,6 +32,7 @@ class ProposalsController < ApplicationController
   def accept
     @task = @proposal.task
     @task.delegate(@proposal.supplier_id, @proposal.receiver_id)
+    Notification.create!(:employee_id => @proposal.supplier_id, text: "<a href=\"#{user_path(current_user)}\">#{current_user.name}</a> принял задачу <a href=\"#{task_path(@proposal.task)}\">#{@proposal.task.title}</a>")
     @proposal.destroy
     redirect_to tasks_path, notice: "Заявка принята, теперь задача появится в списке #{@proposal.receiver.group.name}"
   end

@@ -1,0 +1,27 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Уведомления
+  </div>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>Текст</th>
+      <th>Группа</th>
+      <th>Время</th>
+      <th colspan="2"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @notifications.each do |notification| %>
+        <tr>
+          <td><%= notification.text.html_safe %></td>
+          <td><%= link_to notification.employee.group.name, notification.employee.group %></td>
+          <td><%= notification.created_at.to_s(:short) %></td>
+          <td><%= link_to 'Смотреть', notification %></td>
+          <td><%= link_to 'Удалить', notification, method: :delete, data: {confirm: 'Вы уверены?'} %></td>
+        </tr>
+    <% end %>
+    </tbody>
+  </table>
+</div>
