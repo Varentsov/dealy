@@ -10,6 +10,7 @@ class NotificationsController < ApplicationController
   # GET /notifications/1
   # GET /notifications/1.json
   def show
+    @notification.update_attribute(:has_read, true)
   end
 
   # DELETE /notifications/1

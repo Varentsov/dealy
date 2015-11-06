@@ -15,7 +15,7 @@
     <tbody>
     <% @notifications.each do |notification| %>
         <tr>
-          <td><%= notification.text.html_safe %></td>
+          <td class="<%= notification.has_read? ? 'task-finished' : nil %>"><%= notification.text.html_safe %></td>
           <td><%= link_to notification.employee.group.name, notification.employee.group %></td>
           <td><%= notification.created_at.to_s(:short) %></td>
           <td><%= link_to 'Смотреть', notification %></td>

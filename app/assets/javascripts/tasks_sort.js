@@ -50,6 +50,7 @@ $(document).on('page:change', function() {
     });
 
     $(".sortable-tasks").sortable({
+        //connectWith: ".sortable-tasks",
         helper : fixHelperModified,
         update : function(event, ui) {
             new_sor_ids = findIds();
@@ -60,7 +61,7 @@ $(document).on('page:change', function() {
                 url: "/tasks/edit_sort.js",
                 data: { ids: new_ids.toString(), pressed_id: pressed_id },
                 success: function(response) {
-                    console.log(response.status)
+                    //console.log(response.status)
                 }
             });
         }
