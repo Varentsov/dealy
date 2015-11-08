@@ -21,4 +21,12 @@ class ApplicationController < ActionController::Base
         redirect_to root_url, *args
       end
     end
+
+    def back_or_default
+      if request.env['HTTP_REFERER'].present? && request.env['HTTP_REFERER'] != request.env['REQUEST_URI']
+        request.env['HTTP_REFERER']
+      else
+        root_url
+      end
+    end
 end

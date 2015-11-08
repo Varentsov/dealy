@@ -51,6 +51,9 @@ Rails.application.routes.draw do
       patch 'complete'
       patch 'restore'
       post 'delegate'
+      delete 'remove_access'
+      patch 'confirm_completion'
+      patch 'refuse_completion'
     end
   end
 

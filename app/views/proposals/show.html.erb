@@ -9,15 +9,9 @@
         </p>
     <% end %>
 <% elsif current_user.employee_ids.include?(@proposal.receiver_id) %>
-    <% if @proposal.supplier.is_group? %>
-        <p>
-          Входящая завявка от группы <%= link_to @proposal.supplier.group.name, @proposal.supplier.group %>
-        </p>
-    <% else %>
         <p>
           Входящая завявка от пользователя <%= link_to @proposal.supplier.user.name, @proposal.supplier.user %>
         </p>
-    <% end %>
 <% end %>
 
 <p>
@@ -44,6 +38,6 @@
 <% if current_user.employee_ids.include?(@proposal.supplier_id) %>
     <%= link_to 'Отменить заявку', @proposal,method: :delete %> |
 <% elsif current_user.employee_ids.include?(@proposal.receiver_id) %>
-    <%= link_to 'Принять задачу', accept_proposal_path(@proposal) %> |
+    <%= link_to 'Принять задачу', accept_proposal_path(@proposal) %> | <%= link_to 'Отклонить', @proposal,method: :delete %> |
 <% end %>
 <%= link_to 'Назад', proposals_path %>

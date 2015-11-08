@@ -22,7 +22,7 @@
   </div>
   <div class="field">
     <%= f.label :deadline %><br>
-    <%= f.datetime_select :deadline %>
+    <%= f.datetime_select :deadline, prompt: true %>
   </div>
     <div class="field">
       <%= f.radio_button :planning_state, "to_sometime" %>

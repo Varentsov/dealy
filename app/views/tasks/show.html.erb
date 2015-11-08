@@ -18,13 +18,20 @@
       <br/>
       <% proposal = Proposal.find_by_task_id(@task.id) %>
       <%= link_to 'Заявка', proposal %>
-  <% elsif @employee_task.delegated? %>
+  <% elsif @employee_task.delegated? || @employee_task.confirmation? %>
       <br/>
-      <% employee = @task.employees.where(employee_tasks: {role: EmployeeTask.roles[:performer]}).take %>
-      <% if employee.group_id == @employee_task.employee.group_id %>
-          Исполнитель <%= link_to employee.user.name, employee.user %>
-      <% else %>
-          Исполнитель <%= link_to employee.group.name, employee.group %>
+      <% if !@employee_task.performer? %>
+          <% employee = @task.employees.where(employee_tasks: {role: EmployeeTask.roles[:performer]}).take %>
+          <% if employee.group_id == @employee_task.employee.group_id %>
+              Исполнитель <%= link_to employee.user.name, employee.user %>
+          <% else %>
+              Исполнитель <%= link_to employee.group.name, employee.group %>
+          <% end %>
+          <br />
+          <% if @employee_task.confirmation? %>
+            <%= link_to 'Подтвердить завершение задачи', confirm_completion_task_path(@task), method: :patch %> |
+            <%= link_to 'Отменить завершение задачи', refuse_completion_task_path(@task), method: :patch %>
+          <% end %>
       <% end %>
   <% end %>
 </p>
@@ -100,4 +107,10 @@
     <% @sub_tasks.each do |sub_task| %>
         <%= link_to sub_task.task.title, sub_task.task %> <%= sub_task.task.finished? ? 'Завершена' : nil %><br />
     <% end %>
+<% end %>
+
+<h3>Доступ открыт для</h3>
+<% @employees.each do |employee| %>
+    <% employee_task = EmployeeTask.where(employee_id: employee.id, task_id: @task.id).take %>
+    <%= link_to employee.user.name, employee.user %> - <%= employee_task.role %> <%= (@employee_task.author? && !employee_task.author?) ? link_to('Удалить', remove_access_task_path(employee_task_id: employee_task.id), method: :delete, data: {confirm: 'Are you sure?'}) : nil %><br />
 <% end %>
